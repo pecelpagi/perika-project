@@ -10,33 +10,166 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BudgetRouteImport } from './routes/budget'
+import { Route as CoachRouteImport } from './routes/coach'
+import { Route as FreedomRouteImport } from './routes/freedom'
+import { Route as GoldRouteImport } from './routes/gold'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MoreRouteImport } from './routes/more'
+import { Route as RecordRouteImport } from './routes/record'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TransactionsRouteImport } from './routes/transactions'
+import { Route as TransactionsIdRouteImport } from './routes/transactions.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BudgetRoute = BudgetRouteImport.update({
+  id: '/budget',
+  path: '/budget',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachRoute = CoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreedomRoute = FreedomRouteImport.update({
+  id: '/freedom',
+  path: '/freedom',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoldRoute = GoldRouteImport.update({
+  id: '/gold',
+  path: '/gold',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoreRoute = MoreRouteImport.update({
+  id: '/more',
+  path: '/more',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordRoute = RecordRouteImport.update({
+  id: '/record',
+  path: '/record',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransactionsRoute = TransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransactionsIdRoute = TransactionsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TransactionsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/budget': typeof BudgetRoute
+  '/coach': typeof CoachRoute
+  '/freedom': typeof FreedomRoute
+  '/gold': typeof GoldRoute
+  '/login': typeof LoginRoute
+  '/more': typeof MoreRoute
+  '/record': typeof RecordRoute
+  '/signup': typeof SignupRoute
+  '/transactions': typeof TransactionsRouteWithChildren
+  '/transactions/$id': typeof TransactionsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/budget': typeof BudgetRoute
+  '/coach': typeof CoachRoute
+  '/freedom': typeof FreedomRoute
+  '/gold': typeof GoldRoute
+  '/login': typeof LoginRoute
+  '/more': typeof MoreRoute
+  '/record': typeof RecordRoute
+  '/signup': typeof SignupRoute
+  '/transactions': typeof TransactionsRouteWithChildren
+  '/transactions/$id': typeof TransactionsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/budget': typeof BudgetRoute
+  '/coach': typeof CoachRoute
+  '/freedom': typeof FreedomRoute
+  '/gold': typeof GoldRoute
+  '/login': typeof LoginRoute
+  '/more': typeof MoreRoute
+  '/record': typeof RecordRoute
+  '/signup': typeof SignupRoute
+  '/transactions': typeof TransactionsRouteWithChildren
+  '/transactions/$id': typeof TransactionsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/budget'
+    | '/coach'
+    | '/freedom'
+    | '/gold'
+    | '/login'
+    | '/more'
+    | '/record'
+    | '/signup'
+    | '/transactions'
+    | '/transactions/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/budget'
+    | '/coach'
+    | '/freedom'
+    | '/gold'
+    | '/login'
+    | '/more'
+    | '/record'
+    | '/signup'
+    | '/transactions'
+    | '/transactions/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/budget'
+    | '/coach'
+    | '/freedom'
+    | '/gold'
+    | '/login'
+    | '/more'
+    | '/record'
+    | '/signup'
+    | '/transactions'
+    | '/transactions/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BudgetRoute: typeof BudgetRoute
+  CoachRoute: typeof CoachRoute
+  FreedomRoute: typeof FreedomRoute
+  GoldRoute: typeof GoldRoute
+  LoginRoute: typeof LoginRoute
+  MoreRoute: typeof MoreRoute
+  RecordRoute: typeof RecordRoute
+  SignupRoute: typeof SignupRoute
+  TransactionsRoute: typeof TransactionsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +181,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/budget': {
+      id: '/budget'
+      path: '/budget'
+      fullPath: '/budget'
+      preLoaderRoute: typeof BudgetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach': {
+      id: '/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof CoachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freedom': {
+      id: '/freedom'
+      path: '/freedom'
+      fullPath: '/freedom'
+      preLoaderRoute: typeof FreedomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gold': {
+      id: '/gold'
+      path: '/gold'
+      fullPath: '/gold'
+      preLoaderRoute: typeof GoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/more': {
+      id: '/more'
+      path: '/more'
+      fullPath: '/more'
+      preLoaderRoute: typeof MoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/record': {
+      id: '/record'
+      path: '/record'
+      fullPath: '/record'
+      preLoaderRoute: typeof RecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transactions': {
+      id: '/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof TransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transactions/$id': {
+      id: '/transactions/$id'
+      path: '/$id'
+      fullPath: '/transactions/$id'
+      preLoaderRoute: typeof TransactionsIdRouteImport
+      parentRoute: typeof TransactionsRoute
+    }
   }
 }
 
+interface TransactionsRouteChildren {
+  TransactionsIdRoute: typeof TransactionsIdRoute
+}
+
+const TransactionsRouteChildren: TransactionsRouteChildren = {
+  TransactionsIdRoute: TransactionsIdRoute,
+}
+
+const TransactionsRouteWithChildren = TransactionsRoute._addFileChildren(
+  TransactionsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BudgetRoute: BudgetRoute,
+  CoachRoute: CoachRoute,
+  FreedomRoute: FreedomRoute,
+  GoldRoute: GoldRoute,
+  LoginRoute: LoginRoute,
+  MoreRoute: MoreRoute,
+  RecordRoute: RecordRoute,
+  SignupRoute: SignupRoute,
+  TransactionsRoute: TransactionsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
