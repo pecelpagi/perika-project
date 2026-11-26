@@ -87,7 +87,7 @@ export function TabBar() {
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-1 border-b bg-card pr-1">
+    <div className="flex shrink-0 items-center gap-2 py-1 pr-4 pl-2">
       {/* dnd-kit reads its screen reader text once, so a language change needs a new provider. */}
       <DragDropProvider
         key={lang}
@@ -116,7 +116,7 @@ export function TabBar() {
           layoutScroll
           role="tablist"
           aria-label={t.shell.openTabs}
-          className="relative flex min-w-0 flex-1 gap-1 overflow-x-auto p-1"
+          className="relative flex min-w-0 flex-1 gap-2 overflow-x-auto p-2"
         >
           <AnimatePresence initial={false} mode="popLayout">
             {shown.map((tab, index) => (
@@ -179,9 +179,9 @@ function TabItem({
           <div
             ref={sortable.ref}
             className={cn(
-              "flex items-center rounded-lg transition-[background-color,box-shadow,scale]",
-              active ? "bg-sidebar-accent text-primary" : "text-muted-foreground hover:bg-muted",
-              sortable.isDragSource && "scale-105 bg-popover shadow-lg",
+              "flex items-center rounded-full transition-[background-color,box-shadow,scale]",
+              active ? "bg-brand text-brand-foreground" : "bg-card text-foreground hover:bg-muted",
+              sortable.isDragSource && "scale-105 bg-popover text-popover-foreground shadow-float",
             )}
           >
             <Button
@@ -192,7 +192,7 @@ function TabItem({
               aria-selected={active}
               onClick={() => go(tab.path)}
               onAuxClick={(event) => event.button === 1 && close(tab.path)}
-              className={cn("h-9 max-w-48 pl-3 hover:bg-transparent hover:text-current dark:hover:bg-transparent", home ? "pr-3" : "pr-1")}
+              className={cn("max-w-48 pl-5 text-current hover:bg-transparent", home ? "pr-5" : "pr-2")}
             >
               <span className="truncate">{name}</span>
             </Button>
@@ -215,7 +215,7 @@ function TabItem({
 
 function CloseButton({ label, ...props }: { label: string } & ComponentProps<typeof Button>) {
   return (
-    <Button variant="ghost" size="icon-sm" aria-label={label} className="mr-1" {...props}>
+    <Button variant="ghost" size="icon-sm" aria-label={label} className="mr-1 text-current hover:bg-foreground/10" {...props}>
       <XIcon />
     </Button>
   );
@@ -228,7 +228,7 @@ function TabActionsButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-lg" aria-label={t.shell.tabMenu}>
+        <Button variant="secondary" size="icon" aria-label={t.shell.tabMenu}>
           <EllipsisIcon />
         </Button>
       </DropdownMenuTrigger>

@@ -7,7 +7,7 @@ import { useI18n } from "../i18n";
 export function Amount({ txn }: { txn: Txn }) {
   const { money } = useI18n();
   const income = txn.kind === "income";
-  return <span className={`tabular-nums ${income ? "text-positive" : ""}`}>{income ? `+${money(txn.amount)}` : money(txn.amount)}</span>;
+  return <span className={`num ${income ? "text-success" : ""}`}>{income ? `+${money(txn.amount)}` : money(txn.amount)}</span>;
 }
 
 export function CategorySelect({ value, onChange }: { value: string; onChange: (id: string) => void }) {

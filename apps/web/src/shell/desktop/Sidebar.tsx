@@ -28,10 +28,10 @@ export function Sidebar() {
   const logOut = useLogOut();
 
   return (
-    <SidebarProvider className="min-h-0 w-auto shrink-0" style={{ "--sidebar-width": "15rem" } as CSSProperties}>
-      <SidebarRoot collapsible="none" className="border-r">
+    <SidebarProvider className="min-h-0 w-auto shrink-0" style={{ "--sidebar-width": "16rem" } as CSSProperties}>
+      <SidebarRoot collapsible="none" className="p-2">
         <SidebarHeader>
-          <p className="px-2 pt-2 text-xl font-semibold">Perika</p>
+          <p className="px-4 pt-2 text-2xl">Perika</p>
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
@@ -47,7 +47,6 @@ export function Sidebar() {
                         isActive={active}
                         aria-current={active ? "page" : undefined}
                         onClick={() => go(PATHS[id])}
-                        className="h-10"
                       >
                         <Icon />
                         <span>{t.pages[id]}</span>
@@ -62,10 +61,10 @@ export function Sidebar() {
         <SidebarFooter className="items-start border-t">
           <ThemeSwitch />
           <LanguageSwitch />
-          <p className="w-full truncate px-2 text-xs text-muted-foreground">{readSession()?.email}</p>
+          <p className="w-full truncate px-4 text-xs text-muted-foreground">{readSession()?.email}</p>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton type="button" onClick={logOut} className="h-10">
+              <SidebarMenuButton type="button" onClick={logOut}>
                 <LogOutIcon />
                 <span>{t.shell.logOut}</span>
               </SidebarMenuButton>

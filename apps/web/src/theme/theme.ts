@@ -4,8 +4,8 @@ import { readItem, writeItem } from "../lib/storage";
 export type ThemeChoice = "light" | "dark" | "system";
 
 const KEY = "perika.theme";
-// Keep in sync with `--background` in styles.css and the script in index.html.
-const BAR_COLOR = { light: "#FAFAF9", dark: "#0C0A09" };
+// Keep in sync with `--background` in styles/globals.css and the script in index.html.
+const BAR_COLOR = { light: "#F3F3F3", dark: "#0B0D0B" };
 
 const prefersDark = matchMedia("(prefers-color-scheme: dark)");
 const saved = readItem("local", KEY);

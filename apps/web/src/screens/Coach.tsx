@@ -21,12 +21,12 @@ function Message({ ref, message }: { ref?: Ref<HTMLLIElement>; message: ChatMess
       animate={{ opacity: 1, y: 0 }}
       className={cn("flex max-w-[85%] flex-col", mine ? "self-end" : "self-start")}
     >
-      <Item variant="outline" className={cn("rounded-xl text-base", mine ? "border-primary bg-primary text-primary-foreground" : "bg-card")}>
+      <Item className={cn("px-4 py-3", mine ? "bg-primary text-primary-foreground" : "bg-card")}>
         <ItemContent className="min-w-0 gap-0">
           <p className="break-words">{pick(message.text)}</p>
           {message.sources && (
             <div className="mt-2 border-t pt-2 text-xs text-muted-foreground">
-              <p className="font-medium">{t.coach.sources}</p>
+              <p>{t.coach.sources}</p>
               <ol className="list-decimal pl-4">
                 {message.sources.map((source) => (
                   <li key={source.title}>
@@ -40,13 +40,13 @@ function Message({ ref, message }: { ref?: Ref<HTMLLIElement>; message: ChatMess
             <div className="mt-3 border-t pt-3">
               <p className="mb-2 text-sm text-warning">⚠ {t.coach.approvalTitle}</p>
               <div className="flex flex-wrap gap-2">
-                <Button size="lg" onClick={() => resolveApproval(message.id, "approved")}>{t.coach.approve}</Button>
+                <Button variant="brand" size="lg" onClick={() => resolveApproval(message.id, "approved")}>{t.coach.approve}</Button>
                 <Button size="lg" variant="outline" onClick={() => resolveApproval(message.id, "rejected")}>{t.coach.reject}</Button>
               </div>
             </div>
           )}
           {message.approval && message.approval !== "pending" && (
-            <p className="mt-2 text-sm font-medium">{message.approval === "approved" ? `✓ ${t.coach.approved}` : `✕ ${t.coach.rejected}`}</p>
+            <p className="mt-2 text-sm">{message.approval === "approved" ? `✓ ${t.coach.approved}` : `✕ ${t.coach.rejected}`}</p>
           )}
         </ItemContent>
       </Item>
@@ -97,7 +97,7 @@ export function Coach() {
               key={question.en}
               variant="outline"
               size="lg"
-              className="h-auto min-h-9 bg-card py-2 text-left whitespace-normal"
+              className="h-auto min-h-12 max-w-full shrink bg-card py-2 text-left whitespace-normal"
               disabled={coachBusy}
               onClick={() => sendChat(question)}
             >
@@ -112,7 +112,7 @@ export function Coach() {
           <div className="min-w-0 flex-1">
             <TextField label={t.coach.placeholder} hideLabel placeholder={t.coach.placeholder} value={text} onChange={(e) => setText(e.target.value)} enterKeyHint="send" autoComplete="off" />
           </div>
-          <Button type="submit" className="h-10" disabled={!text.trim() || coachBusy}>{t.coach.send}</Button>
+          <Button type="submit" disabled={!text.trim() || coachBusy}>{t.coach.send}</Button>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">{t.coach.note}</p>
       </form>

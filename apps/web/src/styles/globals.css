@@ -1,0 +1,244 @@
+/* Design system: "Lime Fintech". Source: 7 dashboard screenshots (desktop + mobile).
+   Font: Outfit (npm i @fontsource-variable/outfit) — closest free match to the geometric sans in the images. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/outfit";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ───────────── Light (from images) ───────────── */
+:root {
+  color-scheme: light;
+  --radius: 1rem; /* 16px base. Cards use 3xl = 32px */
+
+  --background: oklch(0.964 0 0);          /* #F3F3F3 app canvas */
+  --foreground: oklch(0.182 0 0);          /* #121212 */
+  --card: oklch(1 0 0);                    /* #FFFFFF */
+  --card-foreground: oklch(0.182 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.182 0 0);
+
+  --primary: oklch(0.338 0.082 144.7);     /* #17421A dark green: Transfer btn, PRIORITY pill */
+  --primary-foreground: oklch(0.879 0.163 129.6); /* lime text on dark green */
+  --secondary: oklch(0.964 0 0);           /* #F3F3F3 segmented track, eye button bg */
+  --secondary-foreground: oklch(0.182 0 0);
+  --muted: oklch(0.964 0 0);
+  --muted-foreground: oklch(0.640 0 0);    /* #8C8C8C labels, inactive nav */
+  --accent: oklch(0.964 0 0);              /* hover surface for menus */
+  --accent-foreground: oklch(0.182 0 0);
+  --destructive: oklch(0.603 0.214 28.5);  /* #E5342B negative amounts */
+  --destructive-foreground: oklch(1 0 0);
+
+  --border: oklch(0.940 0 0);              /* #EBEBEB hairlines, icon-circle rings */
+  --input: oklch(0.916 0 0);               /* #E3E3E3 */
+  --ring: oklch(0.841 0.170 129.7);        /* lime-strong focus ring */
+
+  /* Brand extensions (not in shadcn) */
+  --brand: oklch(0.879 0.163 129.6);       /* #B4EC72 lime: active nav, FAB, rewards card, check button */
+  --brand-foreground: oklch(0.338 0.082 144.7);
+  --brand-soft: oklch(0.927 0.104 128.6);  /* #D2F5AA tiles inside lime card */
+  --brand-strong: oklch(0.841 0.170 129.7);/* #A6E05F decorative sparkle, ring */
+  --success: oklch(0.614 0.166 148.1);     /* #1E9E45 +amounts, +% */
+  --warning: oklch(0.683 0.182 41.8);      /* #F26A2E pending text, goal bar */
+  --warning-border: oklch(0.895 0.049 45.5);/* #F9D3C2 pending row border */
+  --info: oklch(0.581 0.229 263.9);        /* (derived) */
+  --subtle-foreground: oklch(0.773 0 0);   /* #B5B5B5 inactive legend items */
+  --track: oklch(0.946 0 0);               /* #EDEDED progress / donut track */
+  --inverse: oklch(0.178 0 0);             /* #111 search button, bottom nav */
+  --inverse-foreground: oklch(1 0 0);
+  --inverse-muted: oklch(0.285 0 0);       /* #2A2A2A bottom-nav idle buttons */
+
+  --chart-1: oklch(0.879 0.163 129.6);     /* lime */
+  --chart-2: oklch(0.338 0.082 144.7);     /* dark green */
+  --chart-3: oklch(0.880 0 0);             /* light gray segment */
+  --chart-4: oklch(0.683 0.182 41.8);      /* orange */
+  --chart-5: oklch(0.640 0 0);             /* mid gray */
+
+  /* (derived) sidebar — images use top nav only */
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.182 0 0);
+  --sidebar-primary: oklch(0.879 0.163 129.6);
+  --sidebar-primary-foreground: oklch(0.338 0.082 144.7);
+  --sidebar-accent: oklch(0.964 0 0);
+  --sidebar-accent-foreground: oklch(0.182 0 0);
+  --sidebar-border: oklch(0.940 0 0);
+  --sidebar-ring: oklch(0.841 0.170 129.7);
+}
+
+/* ───────────── Dark (derived) ───────────── */
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.156 0.005 145.3);
+  --foreground: oklch(0.961 0 0);
+  --card: oklch(0.209 0.007 145.3);
+  --card-foreground: oklch(0.961 0 0);
+  --popover: oklch(0.209 0.007 145.3);
+  --popover-foreground: oklch(0.961 0 0);
+  --primary: oklch(0.879 0.163 129.6);
+  --primary-foreground: oklch(0.259 0.060 144.9);
+  --secondary: oklch(0.251 0.009 145.3);
+  --secondary-foreground: oklch(0.961 0 0);
+  --muted: oklch(0.251 0.009 145.3);
+  --muted-foreground: oklch(0.695 0.007 145.5);
+  --accent: oklch(0.251 0.009 145.3);
+  --accent-foreground: oklch(0.961 0 0);
+  --destructive: oklch(0.680 0.190 28.5);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.298 0.011 145.3);
+  --input: oklch(0.298 0.011 145.3);
+  --ring: oklch(0.841 0.170 129.7);
+
+  --brand: oklch(0.879 0.163 129.6);
+  --brand-foreground: oklch(0.259 0.060 144.9);
+  --brand-soft: oklch(0.336 0.058 131.3);
+  --brand-strong: oklch(0.841 0.170 129.7);
+  --success: oklch(0.720 0.170 148);
+  --warning: oklch(0.740 0.170 45);
+  --warning-border: oklch(0.400 0.080 45);
+  --info: oklch(0.680 0.180 264);
+  --subtle-foreground: oklch(0.520 0.007 145.5);
+  --track: oklch(0.298 0.011 145.3);
+  --inverse: oklch(0.961 0 0);
+  --inverse-foreground: oklch(0.178 0 0);
+  --inverse-muted: oklch(0.850 0 0);
+
+  --chart-1: oklch(0.879 0.163 129.6);
+  --chart-2: oklch(0.620 0.140 144.7);
+  --chart-3: oklch(0.400 0 0);
+  --chart-4: oklch(0.740 0.170 45);
+  --chart-5: oklch(0.600 0 0);
+
+  --sidebar: oklch(0.209 0.007 145.3);
+  --sidebar-foreground: oklch(0.961 0 0);
+  --sidebar-primary: oklch(0.879 0.163 129.6);
+  --sidebar-primary-foreground: oklch(0.259 0.060 144.9);
+  --sidebar-accent: oklch(0.251 0.009 145.3);
+  --sidebar-accent-foreground: oklch(0.961 0 0);
+  --sidebar-border: oklch(0.298 0.011 145.3);
+  --sidebar-ring: oklch(0.841 0.170 129.7);
+}
+
+@theme inline {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-strong: var(--brand-strong);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-warning-border: var(--warning-border);
+  --color-info: var(--info);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-track: var(--track);
+  --color-inverse: var(--inverse);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-inverse-muted: var(--inverse-muted);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radius: sm 8 · md 12 · lg 16 · xl 20 · 2xl 24 (inner tiles) · 3xl 32 (cards) */
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
+
+  /* Font */
+  --font-sans: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale (size / line-height / tracking). Weight is 400 by default — the design is light, not bold. */
+  --text-xs: 0.8125rem;   --text-xs--line-height: 1.125rem;   /* 13 meta: dates, "vs last month" */
+  --text-sm: 0.875rem;    --text-sm--line-height: 1.25rem;    /* 14 labels, badges */
+  --text-base: 1rem;      --text-base--line-height: 1.5rem;   /* 16 body, list titles, buttons */
+  --text-lg: 1.125rem;    --text-lg--line-height: 1.625rem;   /* 18 list amounts */
+  --text-xl: 1.375rem;    --text-xl--line-height: 1.75rem;    /* 22 card titles */
+  --text-2xl: 1.75rem;    --text-2xl--line-height: 2.125rem;  --text-2xl--letter-spacing: -0.01em; /* 28 greeting */
+  --text-3xl: 2rem;       --text-3xl--line-height: 2.25rem;   --text-3xl--letter-spacing: -0.02em; /* 32 donut center */
+  --text-4xl: 2.5rem;     --text-4xl--line-height: 2.75rem;   --text-4xl--letter-spacing: -0.02em; /* 40 secondary amounts */
+  --text-5xl: 3rem;       --text-5xl--line-height: 3.25rem;   --text-5xl--letter-spacing: -0.03em; /* 48 hero balance, "Good morning!" */
+
+  /* Layout */
+  --container-app: 90rem; /* 1440 */
+  --container-content: 75rem; /* 1200 (derived) marketing */
+
+  /* Shadows: design is flat. Only these two exist. */
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.06);              /* active segmented pill */
+  --shadow-float: 0 16px 40px -12px oklch(0 0 0 / 0.35);     /* floating bottom nav */
+
+  /* Motion */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 200ms var(--ease-smooth);
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { @apply bg-background text-foreground font-sans text-base font-normal; font-feature-settings: "tnum" 1; overscroll-behavior: none; }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) { cursor: pointer; }
+  h1 { @apply text-5xl font-normal; }
+  h2 { @apply text-2xl font-normal; }
+  h3 { @apply text-xl font-normal; }
+  :focus-visible { @apply outline-none ring-[3px] ring-ring; }
+  ::selection { @apply bg-brand text-brand-foreground; }
+}
+
+@layer utilities {
+  /* Fade the last rows of a clipped list (mobile cards in images) */
+  .fade-bottom { mask-image: linear-gradient(to bottom, black 70%, transparent); }
+  .num { font-variant-numeric: tabular-nums; }
+}
+
+@layer base {
+  /* Icons are drawn thin: DESIGN.md, "Icons". */
+  .lucide { stroke-width: 1.5; }
+}
+
+/* Theme change cross-fade, see theme/theme.ts. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

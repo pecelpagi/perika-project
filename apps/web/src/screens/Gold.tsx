@@ -1,3 +1,4 @@
+import { CoinsIcon, HandCoinsIcon, ReceiptTextIcon, TagIcon, TargetIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, type FormEvent } from "react";
 import { TextField } from "@/components/fields";
@@ -97,14 +98,14 @@ export function Gold() {
     <Page>
       <Button size="lg" onClick={addSheet.show} className="md:self-start">{t.gold.add}</Button>
       <div className="grid gap-4 md:grid-cols-2">
-        <SectionCard title={t.gold.holdings}>
-          <p className="text-4xl font-semibold tabular-nums">{number(gold.grams)} g</p>
+        <SectionCard title={t.gold.holdings} icon={CoinsIcon}>
+          <p className="num text-4xl">{number(gold.grams)} g</p>
           <Details
             rows={[
               [t.gold.value, money(gold.value)],
               [
                 gold.gain < 0 ? t.gold.loss : t.gold.gain,
-                <span className={gold.gain < 0 ? "text-destructive" : "text-positive"}>
+                <span className={gold.gain < 0 ? "text-destructive" : "text-success"}>
                   {gold.gain < 0 ? "▼ " : "▲ "}
                   {money(Math.abs(gold.gain))}
                 </span>,
@@ -112,24 +113,24 @@ export function Gold() {
             ]}
           />
         </SectionCard>
-        <SectionCard title={t.gold.price}>
-          <p className="text-3xl font-semibold tabular-nums">{money(goldPrice.buybackPerGram)}</p>
+        <SectionCard title={t.gold.price} icon={TagIcon}>
+          <p className="num text-4xl">{money(goldPrice.buybackPerGram)}</p>
           <p className="mt-1 text-muted-foreground">{t.gold.priceSource(goldPrice.source, date(goldPrice.date))}</p>
           {isOldPrice(goldPrice, todayIso()) && <p className="mt-2 text-warning">⚠ {t.gold.oldPrice}</p>}
-          <Button variant="outline" size="lg" className="mt-3" onClick={priceSheet.show}>{t.gold.checkPrice}</Button>
+          <Button variant="outline" size="lg" className="mt-4" onClick={priceSheet.show}>{t.gold.checkPrice}</Button>
         </SectionCard>
-        <SectionCard title={t.gold.target}>
-          <p className="mb-3 text-xl tabular-nums">{t.gold.ofTarget(number(share, 0), compact(GOLD_TARGET))}</p>
-          <Meter label={t.gold.target} value={gold.value} max={GOLD_TARGET} />
+        <SectionCard title={t.gold.target} icon={TargetIcon}>
+          <p className="num mb-4 text-xl">{t.gold.ofTarget(number(share, 0), compact(GOLD_TARGET))}</p>
+          <Meter tone="warning" label={t.gold.target} value={gold.value} max={GOLD_TARGET} />
         </SectionCard>
-        <SectionCard title={t.gold.zakat}>
+        <SectionCard title={t.gold.zakat} icon={HandCoinsIcon}>
           <p className="text-xl">
             {gold.zakat > 0 ? t.gold.zakatDue(money(gold.zakat)) : t.gold.zakatBelow(number(gold.belowNisab))}
           </p>
           <p className="mt-2 text-muted-foreground">{t.gold.zakatNote}</p>
         </SectionCard>
       </div>
-      <SectionCard title={t.gold.purchases}>
+      <SectionCard title={t.gold.purchases} icon={ReceiptTextIcon}>
         <RowList>
           {newestFirst(txns).filter((x) => x.kind === "gold").map((x) => (
             <ListRow key={x.id} title={`${number(x.grams ?? 0)} g`} detail={date(x.date)} end={money(x.amount)} />
@@ -140,7 +141,7 @@ export function Gold() {
       <PurchaseModal key={addKey} open={addSheet.open} onClose={addSheet.hide} />
       <Modal open={priceSheet.open} onClose={priceSheet.hide}>
         <ModalHeader title={t.gold.newPriceTitle} />
-        <p className="text-3xl font-semibold tabular-nums">{money(found.buybackPerGram)}</p>
+        <p className="num text-4xl">{money(found.buybackPerGram)}</p>
         <p className="text-muted-foreground">{t.gold.priceSource(found.source, date(found.date))}</p>
         <div className="flex gap-2">
           <Button variant="outline" size="lg" className="flex-1" onClick={priceSheet.hide}>{t.common.cancel}</Button>

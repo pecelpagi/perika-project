@@ -42,36 +42,47 @@ Mobile (375px):
 
 ## 2. Design system
 
-Minimalist: generous whitespace, one accent, neutral surfaces, thin borders, little shadow. Components come from shadcn/ui (`radix-nova` style).
-
-| shadcn variable | Light | Dark | Use |
-|---|---|---|---|
-| `--background` | `#FAFAF9` | `#0C0A09` | Page |
-| `--card`, `--popover`, `--sidebar` | `#FFFFFF` | `#1C1917` | Cards, sidebar, drawers, menus |
-| `--foreground` (also `*-foreground` on surfaces) | `#1C1917` | `#F5F5F4` | Main text |
-| `--muted-foreground` | `#57534E` | `#A8A29E` | Secondary text |
-| `--muted`, `--secondary`, `--accent` | `#F5F5F4` | `#292524` | Hover and track surfaces (shadcn's `accent` is not the brand color) |
-| `--border` | `#E7E5E4` | `#292524` | Decorative dividers and card edges |
-| `--input` | `#78716C` | `#78716C` | Input and control outlines |
-| `--primary`, `--ring`, `--chart-1` | `#4338CA` | `#A5B4FC` | Actions, active tab, focus, chart |
-| `--primary-foreground` | `#FFFFFF` | `#1E1B4B` | Text on primary |
-| `--sidebar-accent` | primary 10% on white | primary 12% on `#1C1917` | Active menu item and tab |
-| `--positive` | `#15803D` | `#4ADE80` | Income, gain |
-| `--destructive` | `#B91C1C` | `#F87171` | Overspent, loss, delete, errors |
-| `--warning` | `#92400E` | `#FBBF24` | Old price, not sure |
-
-Text colors are at least 4.8:1 on page and card; text on primary at least 7.9:1; `--input` at least 3.6:1.
-Money colors carry money meaning only, always with a sign, icon or label.
+"Lime Fintech": gray canvas, borderless white cards, one lime accent paired with dark green, pill controls, Outfit at regular weight. Components come from shadcn/ui (`radix-nova` style). [DESIGN.md](../DESIGN.md) has the rules, [_overrides.md](../apps/web/src/components/ui/_overrides.md) the component variants, and [globals.css](../apps/web/src/styles/globals.css) the only token values.
 
 | Item | Rule |
 |---|---|
-| Type | System font; Tailwind sizes 12 to 36px; weights 400, 500, 600; `tabular-nums` for money |
-| Spacing | 4, 8, 12, 16, 24, 32, 48px; page padding 16px mobile, 32px desktop |
-| Radius | Controls 8px, cards 12px, drawer top 16px |
-| Shadow | None on cards; shadcn shadows for drawer, dialog, menu, toast and the dragged tab |
+| Color | Theme tokens only. `brand` is a background, never text on white. `success`, `destructive` and `warning` carry money or state meaning, always with a sign, icon or label |
+| Type | Outfit; weight 400 (500 only for very small text); `num` or `tabular-nums` for money |
+| Spacing | Page padding 16px mobile, 24px from 768px, 32px from 1024px; card padding 20px mobile, 24px desktop; 16px between cards |
+| Radius | Cards, dialogs and drawer top 32px; inner tiles and menus 24px; controls are pills |
+| Shadow | Only `shadow-xs` (selected segment) and `shadow-float` (bottom navigation, toast, dragged tab) |
+| Cards | No border or shadow; icon circle and title in the header; at most one lime card per screen (Home: money left) |
+| Shell | Sidebar (16rem) and pill tab bar on desktop; floating pill of icon circles on mobile, in its own row so it covers nothing |
+| Toast | Top center, below the tab bar or mobile header |
 | Touch | Below 768px, buttons, toggles, inputs, select triggers and options are at least 44px (set in `components/ui`) |
-| Icons | `lucide-react` |
-| Focus | shadcn focus ring in the primary color |
+| Icons | `lucide-react`, stroke 1.5 |
+| Focus | 3px `ring` token |
+
+Known contrast failures (text below 4.5:1, outlines and graphics below 3:1). Token values are kept as the design system defines them:
+
+| Pair | Light | Dark |
+|---|---|---|
+| `muted-foreground` text on card / page | 3.4 / 3.0 | passes |
+| `success` text on card / page | 3.5 / 3.1 | passes |
+| `warning` text on card / page | 3.1 / 2.8 | passes |
+| `destructive` text on card / page | 4.3 / 3.9 | passes |
+| White text on `destructive` button | 4.3 | 3.1 |
+| `ring` focus on card / page | 1.6 / 1.4 | passes |
+| `ring` at 40% (input and select focus; border turns `ring`) | 1.2 | 2.9 |
+| `input` control outline | 1.3 | 1.3 to 1.4 |
+| Selected segment against its track | 1.1 | 1.1 |
+| Active against idle bottom navigation item | passes | 1.1 |
+| Budget bar (`brand`) / goal bar (`warning`) on `track` | 1.2 / 2.6 | passes |
+
+Not followed from the design system:
+
+- Features from its examples: eye toggle, notifications, header search, greeting, currency tabs, copy field, floating action button.
+- react-hook-form and zod; delete uses an Alert Dialog, not a Dialog.
+- Top navigation: the app has 7 sections, so it uses the sidebar variant.
+- Bottom navigation is not `fixed`, so it never covers content or inputs.
+- Page widths stay narrower than `max-w-app`; there is no 12-column dashboard grid.
+- In dark mode the dialog and drawer overlay uses `background`, because `inverse` is light there.
+- Progress bars have no value bubble. Empty states have no title or action button.
 
 Motion:
 
@@ -87,7 +98,7 @@ Motion:
 Only `transform` and `opacity` for movement; colors and shadows use short CSS transitions. Reduced motion turns off CSS animation, Motion, the drag transitions and the theme fade.
 
 - Theme: Light, Dark, System (default), saved in `localStorage` as `perika.theme`. Blocked storage or an invalid value means System.
-- Colors are shadcn CSS variables in `styles.css`. The `.dark` class on `<html>` selects the dark set and `color-scheme`.
+- Colors are CSS variables in `styles/globals.css`. The `.dark` class on `<html>` selects the dark set and `color-scheme`.
 - A small inline script in the `index.html` head sets `.dark` and the `theme-color` meta (`--background` value) before first paint, so nothing flashes. Both update on change; System follows OS changes live.
 
 ## 3. Navigation
@@ -217,14 +228,15 @@ type ChatMessage = { id: string; role: "user" | "coach"; text: string | Localize
 | `shell/desktop/{Sidebar,TabBar,TabMenu}` | Desktop chrome | Desktop |
 | `shell/mobile/{AppHeader,BottomNav}` | Mobile chrome | Mobile |
 | `screens/*.tsx` | One file per screen, with desktop and mobile variants inside | Both |
-| `components/ui/` | shadcn components, added with `pnpm dlx shadcn@latest add`; edited only for 44px touch targets | Both |
+| `components/ui/` | shadcn components, added with `pnpm dlx shadcn@latest add`; edited only for design system variants and 44px touch targets | Both |
 | `components/{page,fields,list,modal,switches}.tsx` | Compositions of shadcn parts | Both |
+| `components/app/` | Design system parts: icon circle, brand sparkle | Both |
 | `hooks/use-mobile.ts` | Generated by shadcn for its sidebar; app code uses `useIsDesktop` | shadcn |
 | `lib/` | Store, storage, `useIsDesktop`, `useShown`, `cn` | Both |
 | `theme/` | Theme provider | Both |
 | `i18n/` | See section 5 | Both |
 | `data/` | See section 6 | Both |
-| `styles.css`, `../index.html` | Color variables; theme script | Both |
+| `styles/globals.css`, `../index.html` | Design tokens; theme script | Both |
 | `../components.json` | shadcn configuration | Tooling |
 | `../public/` | Manifest and icons | Both |
 
@@ -250,6 +262,7 @@ Custom code where shadcn has nothing suitable:
 | `next-themes` | Imported by the generated `sonner.tsx`; the app keeps its own theme store |
 | `@dnd-kit/react`, `@dnd-kit/dom`, `@dnd-kit/helpers` | Tab drag and drop |
 | `motion` | Transitions; no other animation library is added (Recharts animation is off) |
+| `@fontsource-variable/outfit` | The design system font, served with the app |
 
 ## 9. Build steps
 
@@ -261,7 +274,7 @@ Check each step at 1280px and 375px, with `pnpm build` and `pnpm typecheck` pass
 | 2 | Tokens, theme, dictionaries, base components, both switches (shown on Home until steps 4 and 5 move them) | No flash on reload; System follows the OS; choices survive reload; removing an `id` key fails the typecheck |
 | 3 | Routes, page registry, `AppShell`, `TabPanels` | Type in a page, switch and return: input and scroll remain |
 | 4 | Desktop sidebar and tab bar, with drag to reorder and switches | No duplicates; all close actions work; 15 tabs scroll; drag reorders, Home stays first, page state stays; refresh restores tabs and order; tab titles change language |
-| 5 | Mobile header, bottom nav, More with switches, history rules | Back returns Home; resize both ways keeps page and input; language switch keeps state; labels fit 375px |
+| 5 | Mobile header, bottom nav, More with switches, history rules | Back returns Home; resize both ways keeps page and input; language switch keeps state; icon-only navigation items have names and fit 375px |
 | 6 | Login, sign up, auth gate, logout | Signed out: any URL goes to login, then back to it; validation shows in both languages; Back does not return to login; logout clears tabs |
 | 7 | Record and fake parser, sheet, toast | All four parser examples work; unsure asks; Undo restores money left |
 | 8 | Transactions, Detail, Budget | Table on desktop, list on mobile; edits show on Home; dates and money follow language |
@@ -284,9 +297,12 @@ No open questions.
 | 6 | Closing a tab with unsaved input | No warning |
 | 7 | Current `/api/hello` call on Home | Removed in step 1; the API stays unchanged |
 | 8 | Tab reordering | Drag and drop on desktop with dnd-kit; Home fixed first |
-| 9 | Visual style | Minimalist, indigo primary, shadcn variables in section 2 |
+| 9 | Visual style | "Lime Fintech" design system; replaces the indigo style (section 2) |
 | 10 | Theme and language controls | Desktop sidebar bottom; mobile "More"; no Settings screen |
 | 11 | Login and sign up | Fake, outside the tab shell; logout in sidebar and "More" |
 | 12 | Component library | shadcn/ui on Radix; replaces the hand-written components and icons |
 | 13 | Animation | Motion for app transitions; shadcn components keep their built-in animations |
 | 14 | Delete confirmation | shadcn Alert Dialog on desktop and mobile |
+| 15 | Design system conflicts | The design system wins for look only; app behaviour, shell and form logic stay |
+| 16 | Contrast of design tokens | Values unchanged; failures listed in section 2 |
+| 17 | Mobile navigation labels | Icons only, each with an `aria-label` |

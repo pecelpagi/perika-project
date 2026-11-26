@@ -1,4 +1,4 @@
-import { LogOutIcon } from "lucide-react";
+import { LanguagesIcon, LogOutIcon, SunMoonIcon } from "lucide-react";
 import { ListRow, RowList } from "@/components/list";
 import { Page, SectionCard } from "@/components/page";
 import { LanguageSwitch, ThemeSwitch } from "@/components/switches";
@@ -18,7 +18,7 @@ export function More() {
 
   return (
     <Page className="max-w-xl">
-      <SectionCard className="py-0">
+      <SectionCard className="py-2 md:py-2">
         <RowList>
           {LINKS.map((id) => {
             const Icon = PAGE_ICONS[id];
@@ -37,10 +37,10 @@ export function More() {
           })}
         </RowList>
       </SectionCard>
-      <SectionCard title={t.shell.theme}>
+      <SectionCard title={t.shell.theme} icon={SunMoonIcon}>
         <ThemeSwitch />
       </SectionCard>
-      <SectionCard title={t.shell.language}>
+      <SectionCard title={t.shell.language} icon={LanguagesIcon}>
         <LanguageSwitch />
       </SectionCard>
       <p className="text-sm break-words text-muted-foreground">{t.more.signedInAs(readSession()?.email ?? "")}</p>

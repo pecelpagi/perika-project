@@ -52,7 +52,7 @@ export function ListRow({
       className="w-full"
     >
       {onClick ? (
-        <Item asChild size="sm" className={`${style} hover:bg-muted/60`}>
+        <Item asChild size="sm" className={`${style} hover:bg-muted/50`}>
           <button type="button" onClick={onClick}>
             {content}
           </button>

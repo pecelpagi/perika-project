@@ -45,12 +45,12 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
         animate={{ opacity: 1, y: 0 }}
         className="flex w-full flex-1 flex-col md:max-w-sm md:flex-none"
       >
-        <Card className="flex-1 justify-center gap-6 p-6 text-base max-md:rounded-none max-md:bg-transparent max-md:ring-0 md:p-8">
+        <Card className="flex-1 justify-center max-md:rounded-none max-md:bg-transparent md:p-8">
           <div>
-            <p className="text-4xl font-semibold text-primary">Perika</p>
+            <p className="text-5xl text-primary">Perika</p>
             <p className="text-muted-foreground">{t.auth.tagline}</p>
           </div>
-          <h1 className="text-xl font-semibold">{title}</h1>
+          <h1 className="text-xl">{title}</h1>
           <form noValidate onSubmit={submit} className="flex flex-col gap-4">
             <TextField
               label={t.auth.email}
@@ -71,7 +71,7 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
             />
             <Button type="submit" size="lg">{signup ? t.auth.signup : t.auth.login}</Button>
           </form>
-          <Button variant="link" size="lg" className="h-auto min-h-9 whitespace-normal" onClick={other}>
+          <Button variant="link" size="lg" className="h-auto min-h-11 whitespace-normal" onClick={other}>
             {signup ? t.auth.toLogin : t.auth.toSignup}
           </Button>
           <p className="text-xs text-muted-foreground">{t.auth.demo}</p>

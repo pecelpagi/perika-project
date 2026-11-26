@@ -1,3 +1,4 @@
+import { CalendarIcon, ChartAreaIcon, ListChecksIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
@@ -12,7 +13,7 @@ function PathChart({ projection }: { projection: Projection }) {
   const { series, target } = projection;
   const top = Math.max(target, ...series.map((p) => p.value)) * 1.05;
   const end = series.at(-1);
-  const config = { value: { label: t.freedom.chart, color: "var(--chart-1)" } } satisfies ChartConfig;
+  const config = { value: { label: t.freedom.chart, color: "var(--chart-2)" } } satisfies ChartConfig;
 
   return (
     <figure>
@@ -27,12 +28,12 @@ function PathChart({ projection }: { projection: Projection }) {
           <CartesianGrid vertical={false} />
           <XAxis dataKey="year" tickLine={false} axisLine={false} ticks={[0, series.length - 1]} interval={0} tickFormatter={t.freedom.year} />
           <YAxis hide domain={[0, top]} />
-          <Area dataKey="value" type="linear" stroke="var(--color-value)" strokeWidth={2} fill="var(--color-value)" fillOpacity={0.15} isAnimationActive={false} />
+          <Area dataKey="value" type="linear" stroke="var(--color-value)" strokeWidth={2} fill="var(--chart-1)" fillOpacity={0.4} isAnimationActive={false} />
           <ReferenceLine y={target} stroke="var(--muted-foreground)" strokeDasharray="6 4" />
         </AreaChart>
       </ChartContainer>
       <figcaption className="mt-2 mb-2 flex flex-wrap gap-x-4 text-xs text-muted-foreground">
-        <span><span className="text-primary">━</span> {t.freedom.chart}: {compact(end?.value ?? 0)}</span>
+        <span><span className="text-chart-2">━</span> {t.freedom.chart}: {compact(end?.value ?? 0)}</span>
         <span>┅ {t.freedom.target}: {compact(target)}</span>
       </figcaption>
     </figure>
@@ -59,13 +60,13 @@ export function Freedom() {
         />
       </div>
       {/* Figures fade when the view changes. */}
-      <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-4 md:gap-6">
-        <SectionCard title={t.freedom.date}>
-          <p className="text-4xl font-semibold">{month(freedomDate)}</p>
+      <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-4">
+        <SectionCard title={t.freedom.date} icon={CalendarIcon}>
+          <p className="text-4xl">{month(freedomDate)}</p>
           <p className="text-muted-foreground">{t.freedom.range(month(range[0]), month(range[1]))}</p>
         </SectionCard>
         <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-          <SectionCard title={t.freedom.chart}>
+          <SectionCard title={t.freedom.chart} icon={ChartAreaIcon}>
             <PathChart projection={projection} />
             <Details
               rows={[
@@ -74,7 +75,7 @@ export function Freedom() {
               ]}
             />
           </SectionCard>
-          <SectionCard title={t.freedom.assumptions}>
+          <SectionCard title={t.freedom.assumptions} icon={ListChecksIcon}>
             <ul className="list-disc space-y-2 pl-5">
               {assumptions.map((item) => (
                 <li key={item.en}>{pick(item)}</li>

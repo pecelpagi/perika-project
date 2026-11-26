@@ -1,3 +1,4 @@
+import { WalletIcon } from "lucide-react";
 import { useState } from "react";
 import { TextField } from "@/components/fields";
 import { Modal, ModalHeader, useOpenKey } from "@/components/modal";
@@ -40,7 +41,7 @@ function BudgetInput({ label, field, inline }: { label: string; field: ReturnTyp
       label={label}
       hideLabel={inline}
       inputMode="decimal"
-      className="tabular-nums"
+      className="num"
       value={field.value}
       onChange={(e) => field.setDraft(e.target.value)}
       onBlur={inline ? field.commit : undefined}
@@ -106,7 +107,7 @@ export function Budget() {
   const openKey = useOpenKey(editOpen);
 
   const leftText = (left: number) => (
-    <span className={`tabular-nums ${left < 0 ? "text-destructive" : ""}`}>
+    <span className={`num ${left < 0 ? "text-destructive" : ""}`}>
       {left < 0 && `⚠ ${t.budget.over}: `}
       {money(left)}
     </span>
@@ -114,8 +115,8 @@ export function Budget() {
 
   return (
     <Page>
-      <SectionCard title={t.budget.total}>
-        <p className="mb-3 text-3xl font-semibold">{leftText(totalBudget - totalSpent)}</p>
+      <SectionCard title={t.budget.total} icon={WalletIcon}>
+        <p className="mb-4 text-4xl">{leftText(totalBudget - totalSpent)}</p>
         <Meter label={t.budget.total} value={totalSpent} max={totalBudget} over={totalSpent > totalBudget} />
       </SectionCard>
       {desktop ? (
@@ -123,16 +124,16 @@ export function Budget() {
           <Table className="table-fixed">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="pl-0">{t.common.category}</TableHead>
+                <TableHead className="pl-0 lg:pl-0">{t.common.category}</TableHead>
                 <TableHead className="w-44">{t.budget.budget}</TableHead>
                 <TableHead className="text-right">{t.budget.spent}</TableHead>
-                <TableHead className="pr-0 text-right">{t.budget.left}</TableHead>
+                <TableHead className="pr-0 lg:pr-0 text-right">{t.budget.left}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.map(({ category, spent, left }) => (
                 <TableRow key={category.id}>
-                  <TableCell className="py-3 pr-4 pl-0">
+                  <TableCell className="py-3 pl-0 lg:pl-0">
                     <p className="mb-2 truncate">{pick(category.name)}</p>
                     <Meter label={pick(category.name)} value={spent} max={category.budget} over={left < 0} />
                   </TableCell>
@@ -140,17 +141,17 @@ export function Budget() {
                     <InlineBudgetForm category={category} />
                   </TableCell>
                   <TableCell className="py-3 text-right whitespace-normal tabular-nums">{money(spent)}</TableCell>
-                  <TableCell className="py-3 pr-0 text-right whitespace-normal">{leftText(left)}</TableCell>
+                  <TableCell className="py-3 pr-0 lg:pr-0 text-right whitespace-normal">{leftText(left)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </SectionCard>
       ) : (
-        <ItemGroup className="gap-2">
+        <ItemGroup className="gap-3">
           {rows.map(({ category, spent, left }) => (
             <div key={category.id} role="listitem">
-              <Item asChild variant="outline" className="rounded-xl bg-card p-4 text-left">
+              <Item asChild className="gap-3 rounded-3xl bg-card p-5 text-left hover:bg-muted/50">
                 <button
                   type="button"
                   onClick={() => {

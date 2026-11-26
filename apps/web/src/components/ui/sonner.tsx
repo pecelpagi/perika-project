@@ -33,12 +33,20 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          "--border-radius": "calc(infinity * 1px)",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          // Sonner styles its toast without a layer, so these need `!`.
+          toast:
+            "cn-toast !rounded-full !border !border-border !bg-card !px-5 !py-3 !text-base !text-foreground !shadow-float !font-sans",
+          title: "!font-normal",
+          description: "!text-sm !text-muted-foreground",
+          actionButton:
+            "!h-9 !rounded-full !bg-primary !px-4 !text-sm !text-primary-foreground max-md:!h-11 max-md:!min-w-11",
+          success: "[&_[data-icon]]:text-success",
+          error: "[&_[data-icon]]:text-destructive",
         },
       }}
       {...props}

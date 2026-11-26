@@ -29,7 +29,12 @@ export function TransactionDetail({ path, params }: ScreenProps) {
   const shown = useShown();
   const txn = txns.find((x) => x.id === params.id);
 
-  if (!txn) return <EmptyState>{t.detail.notFound}</EmptyState>;
+  if (!txn)
+    return (
+      <Page className="max-w-xl">
+        <EmptyState>{t.detail.notFound}</EmptyState>
+      </Page>
+    );
 
   function remove(id: string) {
     removeTxn(id);
@@ -44,7 +49,7 @@ export function TransactionDetail({ path, params }: ScreenProps) {
     <Page className="max-w-xl">
       <SectionCard>
         <p className="text-muted-foreground">{txn.note}</p>
-        <p className="mb-2 text-4xl font-semibold"><Amount txn={txn} /></p>
+        <p className="mb-2 text-4xl"><Amount txn={txn} /></p>
         <Details
           rows={[
             [t.common.date, date(txn.date)],

@@ -1,4 +1,3 @@
-import { cn } from "cn";
 import { useId, useLayoutEffect, useState, type ComponentProps } from "react";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,7 @@ export function TextField({
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
-        className={cn("h-10 bg-card", className)}
+        className={className}
         {...props}
       />
       {hint && !error && <FieldDescription className="text-xs">{hint}</FieldDescription>}
@@ -52,7 +51,7 @@ export function SelectField({
         {label}
       </FieldLabel>
       <Select open={open} onOpenChange={setOpen} value={value} onValueChange={(next) => next && onChange(next)}>
-        <SelectTrigger id={id} className="w-full min-w-0 bg-card text-base data-[size=default]:h-10 md:text-sm">
+        <SelectTrigger id={id} className="w-full min-w-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent position="popper">
