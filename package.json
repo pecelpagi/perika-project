@@ -1,0 +1,16 @@
+{
+  "name": "perika",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @perika/api dev",
+    "dev:web": "pnpm --filter @perika/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devEngines": {
+    "packageManager": { "name": "pnpm", "version": "11.23.0", "onFail": "download" }
+  },
+  "packageManager": "pnpm@11.23.0"
+}
