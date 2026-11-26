@@ -1,6 +1,6 @@
 import { setLang, useI18n } from "../i18n";
 import { setTheme, useTheme } from "../theme/theme";
-import { Segmented } from ".";
+import { Segmented } from "./page";
 
 export function ThemeSwitch() {
   const { t } = useI18n();

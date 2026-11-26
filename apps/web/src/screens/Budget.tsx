@@ -1,4 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { TextField } from "@/components/fields";
+import { Modal, ModalHeader, useOpenKey } from "@/components/modal";
+import { Meter, Page, SectionCard } from "@/components/page";
+import { Button } from "@/components/ui/button";
+import { Item, ItemFooter, ItemGroup, ItemHeader, ItemTitle } from "@/components/ui/item";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { spentIn } from "../data/calc";
 import { parseAmount } from "../data/fake-parser";
 import { todayIso } from "../data/format";
@@ -7,16 +13,15 @@ import type { Category } from "../data/types";
 import { useI18n } from "../i18n";
 import { useIsDesktop } from "../lib/use-is-desktop";
 import { useSheet } from "../shell/nav";
-import { Button, Card, Input, Modal, Page, Progress } from "../ui";
 
-/** Amount field that saves a valid value on submit, and on blur if `inline`. */
-function BudgetForm({ category, inline, onSaved }: { category: Category; inline?: boolean; onSaved?: () => void }) {
-  const { t, number, pick } = useI18n();
+/** Amount field state. `commit` saves a valid value and says whether it was valid. */
+function useBudgetDraft(category?: Category) {
+  const { number } = useI18n();
   const [draft, setDraft] = useState<string>(); // undefined: show the saved value
   const [invalid, setInvalid] = useState(false);
 
   function commit() {
-    if (draft === undefined) return true;
+    if (draft === undefined || !category) return true;
     const amount = parseAmount(draft);
     setInvalid(amount === null);
     if (amount === null) return false;
@@ -25,25 +30,61 @@ function BudgetForm({ category, inline, onSaved }: { category: Category; inline?
     return true;
   }
 
-  function submit(event: FormEvent) {
-    event.preventDefault();
-    if (commit()) onSaved?.();
-  }
+  return { value: draft ?? (category ? number(category.budget, 0) : ""), setDraft, invalid, commit };
+}
 
+function BudgetInput({ label, field, inline }: { label: string; field: ReturnType<typeof useBudgetDraft>; inline?: boolean }) {
+  const { t } = useI18n();
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
-      <Input
-        label={inline ? `${t.budget.budget}: ${pick(category.name)}` : t.budget.budget}
-        hideLabel={inline}
-        inputMode="decimal"
-        className="tabular-nums"
-        value={draft ?? number(category.budget, 0)}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={inline ? commit : undefined}
-        error={invalid ? t.common.invalidAmount : undefined}
-      />
-      {!inline && <Button type="submit">{t.common.save}</Button>}
+    <TextField
+      label={label}
+      hideLabel={inline}
+      inputMode="decimal"
+      className="tabular-nums"
+      value={field.value}
+      onChange={(e) => field.setDraft(e.target.value)}
+      onBlur={inline ? field.commit : undefined}
+      error={field.invalid ? t.common.invalidAmount : undefined}
+    />
+  );
+}
+
+/** Table cell form: saves on submit and on blur. */
+function InlineBudgetForm({ category }: { category: Category }) {
+  const { t, pick } = useI18n();
+  const field = useBudgetDraft(category);
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        field.commit();
+      }}
+    >
+      <BudgetInput inline label={`${t.budget.budget}: ${pick(category.name)}`} field={field} />
     </form>
+  );
+}
+
+// State lives outside the modal, so typed text survives the switch between drawer and dialog.
+function BudgetModal({ category, open, onClose }: { category?: Category; open: boolean; onClose: () => void }) {
+  const { t, pick } = useI18n();
+  const field = useBudgetDraft(category);
+  return (
+    <Modal open={open} onClose={onClose}>
+      <ModalHeader title={category ? t.budget.editTitle(pick(category.name)) : ""} />
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (field.commit()) onClose();
+        }}
+        className="flex flex-col gap-4"
+      >
+        <BudgetInput label={t.budget.budget} field={field} />
+        <Button type="submit" size="lg">
+          {t.common.save}
+        </Button>
+      </form>
+    </Modal>
   );
 }
 
@@ -61,9 +102,11 @@ export function Budget() {
   const totalBudget = categories.reduce((sum, c) => sum + c.budget, 0);
   const totalSpent = spentIn(txns, month);
   const selected = categories.find((c) => c.id === editing);
+  const editOpen = sheet.open && !!selected;
+  const openKey = useOpenKey(editOpen);
 
   const leftText = (left: number) => (
-    <span className={`tabular-nums ${left < 0 ? "text-negative" : ""}`}>
+    <span className={`tabular-nums ${left < 0 ? "text-destructive" : ""}`}>
       {left < 0 && `⚠ ${t.budget.over}: `}
       {money(left)}
     </span>
@@ -71,66 +114,65 @@ export function Budget() {
 
   return (
     <Page>
-      <Card title={t.budget.total}>
+      <SectionCard title={t.budget.total}>
         <p className="mb-3 text-3xl font-semibold">{leftText(totalBudget - totalSpent)}</p>
-        <Progress label={t.budget.total} value={totalSpent} max={totalBudget} over={totalSpent > totalBudget} />
-      </Card>
+        <Meter label={t.budget.total} value={totalSpent} max={totalBudget} over={totalSpent > totalBudget} />
+      </SectionCard>
       {desktop ? (
-        <Card>
-          <table className="w-full table-fixed text-left text-sm">
-            <thead className="text-muted">
-              <tr className="border-b border-border">
-                <th className="py-2 font-medium">{t.common.category}</th>
-                <th className="w-40 py-2 font-medium">{t.budget.budget}</th>
-                <th className="py-2 text-right font-medium">{t.budget.spent}</th>
-                <th className="py-2 text-right font-medium">{t.budget.left}</th>
-              </tr>
-            </thead>
-            <tbody>
+        <SectionCard>
+          <Table className="table-fixed">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="pl-0">{t.common.category}</TableHead>
+                <TableHead className="w-44">{t.budget.budget}</TableHead>
+                <TableHead className="text-right">{t.budget.spent}</TableHead>
+                <TableHead className="pr-0 text-right">{t.budget.left}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {rows.map(({ category, spent, left }) => (
-                <tr key={category.id} className="border-b border-border last:border-0">
-                  <td className="py-3 pr-4">
+                <TableRow key={category.id}>
+                  <TableCell className="py-3 pr-4 pl-0">
                     <p className="mb-2 truncate">{pick(category.name)}</p>
-                    <Progress label={pick(category.name)} value={spent} max={category.budget} over={left < 0} />
-                  </td>
-                  <td className="py-3"><BudgetForm category={category} inline /></td>
-                  <td className="py-3 text-right tabular-nums">{money(spent)}</td>
-                  <td className="py-3 text-right">{leftText(left)}</td>
-                </tr>
+                    <Meter label={pick(category.name)} value={spent} max={category.budget} over={left < 0} />
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <InlineBudgetForm category={category} />
+                  </TableCell>
+                  <TableCell className="py-3 text-right whitespace-normal tabular-nums">{money(spent)}</TableCell>
+                  <TableCell className="py-3 pr-0 text-right whitespace-normal">{leftText(left)}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </Card>
+            </TableBody>
+          </Table>
+        </SectionCard>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ItemGroup className="gap-2">
           {rows.map(({ category, spent, left }) => (
-            <li key={category.id}>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(category.id);
-                  sheet.show();
-                }}
-                className="w-full rounded-xl border border-border bg-surface p-4 text-left"
-              >
-                <span className="mb-2 flex justify-between gap-3">
-                  <span className="truncate font-medium">{pick(category.name)}</span>
-                  <span className="shrink-0 tabular-nums">{money(category.budget)}</span>
-                </span>
-                <Progress label={pick(category.name)} value={spent} max={category.budget} over={left < 0} />
-                <span className="mt-2 block text-sm text-muted">
-                  {left < 0 ? leftText(left) : t.budget.leftOf(money(left))}
-                </span>
-              </button>
-            </li>
+            <div key={category.id} role="listitem">
+              <Item asChild variant="outline" className="rounded-xl bg-card p-4 text-left">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditing(category.id);
+                    sheet.show();
+                  }}
+                >
+                  <ItemHeader>
+                    <ItemTitle className="block min-w-0 truncate">{pick(category.name)}</ItemTitle>
+                    <span className="shrink-0 tabular-nums">{money(category.budget)}</span>
+                  </ItemHeader>
+                  <Meter label={pick(category.name)} value={spent} max={category.budget} over={left < 0} />
+                  <ItemFooter className="text-muted-foreground">
+                    {left < 0 ? leftText(left) : t.budget.leftOf(money(left))}
+                  </ItemFooter>
+                </button>
+              </Item>
+            </div>
           ))}
-        </ul>
+        </ItemGroup>
       )}
-      {sheet.open && selected && (
-        <Modal title={t.budget.editTitle(pick(selected.name))} onClose={sheet.hide}>
-          <BudgetForm key={selected.id} category={selected} onSaved={sheet.hide} />
-        </Modal>
-      )}
+      <BudgetModal key={openKey} category={selected} open={editOpen} onClose={sheet.hide} />
     </Page>
   );
 }

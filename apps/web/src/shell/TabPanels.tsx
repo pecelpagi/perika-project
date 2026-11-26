@@ -1,3 +1,4 @@
+import { animate } from "motion/react";
 import { Activity, useLayoutEffect, useRef, type ComponentType, type ReactNode } from "react";
 import { Budget } from "../screens/Budget";
 import { Coach } from "../screens/Coach";
@@ -32,7 +33,13 @@ function Panel({ children }: { children: ReactNode }) {
 
   // <Activity> re-runs this each time the panel is shown.
   useLayoutEffect(() => {
-    if (ref.current) ref.current.scrollTop = scrollTop.current;
+    const panel = ref.current;
+    if (!panel) return;
+    panel.scrollTop = scrollTop.current;
+    // Page switch fade. Animating the panel itself never remounts the screen.
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const animation = animate(panel, { opacity: [0, 1], y: [8, 0] }, { duration: 0.18, ease: "easeOut" });
+    return () => animation.complete();
   }, []);
 
   return (

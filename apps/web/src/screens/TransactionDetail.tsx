@@ -1,11 +1,22 @@
 import { useRouter } from "@tanstack/react-router";
+import { Details, EmptyState, Page, SectionCard } from "@/components/page";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { data, removeTxn } from "../data/store";
 import { useI18n } from "../i18n";
 import { useIsDesktop } from "../lib/use-is-desktop";
+import { useShown } from "../lib/use-shown";
 import { useSheet } from "../shell/nav";
 import type { ScreenProps } from "../shell/TabPanels";
 import { useTabs } from "../shell/tabs-store";
-import { Button, Card, Details, EmptyState, Modal, Page } from "../ui";
 import { Amount, TxnCategorySelect } from "./shared";
 
 export function TransactionDetail({ path, params }: ScreenProps) {
@@ -15,6 +26,7 @@ export function TransactionDetail({ path, params }: ScreenProps) {
   const desktop = useIsDesktop();
   const { close, drop } = useTabs();
   const sheet = useSheet(`delete:${path}`);
+  const shown = useShown();
   const txn = txns.find((x) => x.id === params.id);
 
   if (!txn) return <EmptyState>{t.detail.notFound}</EmptyState>;
@@ -30,9 +42,9 @@ export function TransactionDetail({ path, params }: ScreenProps) {
 
   return (
     <Page className="max-w-xl">
-      <Card>
-        <p className="text-sm text-muted">{txn.note}</p>
-        <p className="text-4xl font-semibold"><Amount txn={txn} /></p>
+      <SectionCard>
+        <p className="text-muted-foreground">{txn.note}</p>
+        <p className="mb-2 text-4xl font-semibold"><Amount txn={txn} /></p>
         <Details
           rows={[
             [t.common.date, date(txn.date)],
@@ -42,23 +54,25 @@ export function TransactionDetail({ path, params }: ScreenProps) {
           ]}
         />
         {txn.kind === "spending" && <TxnCategorySelect txn={txn} />}
-      </Card>
-      <Button variant="danger" className="md:self-start" onClick={sheet.show}>
+      </SectionCard>
+      <Button variant="destructive" size="lg" className="md:self-start" onClick={sheet.show}>
         {t.common.delete}
       </Button>
-      {sheet.open && (
-        <Modal title={t.detail.deleteTitle} onClose={sheet.hide}>
-          <p className="text-muted">{t.detail.deleteBody}</p>
-          <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1" onClick={sheet.hide}>
-              {t.common.cancel}
-            </Button>
-            <Button variant="danger" className="flex-1" onClick={() => remove(txn.id)}>
+      <AlertDialog open={sheet.open && shown} onOpenChange={(open) => !open && sheet.hide()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.detail.deleteTitle}</AlertDialogTitle>
+            <AlertDialogDescription>{t.detail.deleteBody}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel size="lg">{t.common.cancel}</AlertDialogCancel>
+            {/* Not AlertDialogAction: it would also go back in history while `remove` navigates. */}
+            <Button variant="destructive" size="lg" onClick={() => remove(txn.id)}>
               {t.common.delete}
             </Button>
-          </div>
-        </Modal>
-      )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Page>
   );
 }

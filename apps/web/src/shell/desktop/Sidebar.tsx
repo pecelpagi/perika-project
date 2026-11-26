@@ -1,7 +1,20 @@
-import { useLogOut, readSession } from "../../auth/session";
+import { LogOutIcon } from "lucide-react";
+import type { CSSProperties } from "react";
+import { LanguageSwitch, ThemeSwitch } from "@/components/switches";
+import {
+  Sidebar as SidebarRoot,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import { readSession, useLogOut } from "../../auth/session";
 import { useI18n } from "../../i18n";
-import { Icon } from "../../ui/icons";
-import { LanguageSwitch, ThemeSwitch } from "../../ui/switches";
+import { PAGE_ICONS } from "../icons";
 import { useNav } from "../nav";
 import { PATHS } from "../pages";
 import { useTabs } from "../tabs-store";
@@ -15,36 +28,51 @@ export function Sidebar() {
   const logOut = useLogOut();
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-surface p-3">
-      <p className="px-3 pt-2 text-xl font-semibold">Perika</p>
-      <nav aria-label={t.shell.menu} className="flex flex-col gap-1">
-        {MENU.map((id) => {
-          const active = activePath === PATHS[id];
-          return (
-            <button
-              key={id}
-              type="button"
-              aria-current={active ? "page" : undefined}
-              onClick={() => go(PATHS[id])}
-              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-left text-sm transition ${
-                active ? "bg-accent/10 font-medium text-accent" : "hover:bg-text/5"
-              }`}
-            >
-              <Icon name={id} />
-              {t.pages[id]}
-            </button>
-          );
-        })}
-      </nav>
-      <div className="mt-auto flex flex-col items-start gap-2 border-t border-border pt-3">
-        <ThemeSwitch />
-        <LanguageSwitch />
-        <p className="w-full truncate px-1 text-xs text-muted">{readSession()?.email}</p>
-        <button type="button" onClick={logOut} className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm hover:bg-text/5">
-          <Icon name="logout" />
-          {t.shell.logOut}
-        </button>
-      </div>
-    </aside>
+    <SidebarProvider className="min-h-0 w-auto shrink-0" style={{ "--sidebar-width": "15rem" } as CSSProperties}>
+      <SidebarRoot collapsible="none" className="border-r">
+        <SidebarHeader>
+          <p className="px-2 pt-2 text-xl font-semibold">Perika</p>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <nav aria-label={t.shell.menu}>
+              <SidebarMenu className="gap-1">
+                {MENU.map((id) => {
+                  const active = activePath === PATHS[id];
+                  const Icon = PAGE_ICONS[id];
+                  return (
+                    <SidebarMenuItem key={id}>
+                      <SidebarMenuButton
+                        type="button"
+                        isActive={active}
+                        aria-current={active ? "page" : undefined}
+                        onClick={() => go(PATHS[id])}
+                        className="h-10"
+                      >
+                        <Icon />
+                        <span>{t.pages[id]}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </nav>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter className="items-start border-t">
+          <ThemeSwitch />
+          <LanguageSwitch />
+          <p className="w-full truncate px-2 text-xs text-muted-foreground">{readSession()?.email}</p>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton type="button" onClick={logOut} className="h-10">
+                <LogOutIcon />
+                <span>{t.shell.logOut}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </SidebarRoot>
+    </SidebarProvider>
   );
 }
