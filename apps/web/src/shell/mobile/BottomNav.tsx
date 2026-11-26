@@ -17,33 +17,32 @@ export function BottomNav() {
   // Pages without their own item belong to "More".
   const current = primary.includes(activePath) ? activePath : PATHS.more;
 
+  // A floating pill in its own row, so it never covers page content or a sticky input.
   return (
-    <nav aria-label={t.shell.menu} className="grid shrink-0 grid-cols-5 border-t bg-card pb-[env(safe-area-inset-bottom)]">
-      {ITEMS.map((id) => {
-        const active = current === PATHS[id];
-        const Icon = PAGE_ICONS[id];
-        return (
-          <Button
-            key={id}
-            variant="ghost"
-            aria-current={active ? "page" : undefined}
-            onClick={() => switchSection(PATHS[id])}
-            className={cn(
-              "h-16 min-w-0 flex-col gap-1 rounded-none px-0 text-xs",
-              active ? "font-semibold text-primary hover:text-primary" : "text-muted-foreground",
-            )}
-          >
-            {id === "record" ? (
-              <span className="grid size-9 place-items-center rounded-full bg-primary text-primary-foreground">
-                <Icon className="size-5" />
-              </span>
-            ) : (
-              <Icon className="size-6" />
-            )}
-            <span className="max-w-full truncate">{t.pages[id]}</span>
-          </Button>
-        );
-      })}
-    </nav>
+    <div className="flex shrink-0 justify-center pt-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <nav aria-label={t.shell.menu} className="flex gap-1.5 rounded-full bg-inverse p-2 shadow-float min-[360px]:gap-2">
+        {ITEMS.map((id) => {
+          const active = current === PATHS[id];
+          const Icon = PAGE_ICONS[id];
+          return (
+            <Button
+              key={id}
+              variant="ghost"
+              aria-label={t.pages[id]}
+              aria-current={active ? "page" : undefined}
+              onClick={() => switchSection(PATHS[id])}
+              className={cn(
+                "size-14 px-0",
+                active
+                  ? "bg-brand text-brand-foreground hover:bg-brand"
+                  : "bg-inverse-muted text-inverse-foreground hover:bg-inverse-muted",
+              )}
+            >
+              <Icon />
+            </Button>
+          );
+        })}
+      </nav>
+    </div>
   );
 }

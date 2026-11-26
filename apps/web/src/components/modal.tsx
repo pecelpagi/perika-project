@@ -30,7 +30,7 @@ export function Modal({ open, onClose, children }: { open: boolean; onClose: () 
       <DialogContent
         aria-describedby={undefined}
         showCloseButton={false}
-        className="max-h-[90dvh] gap-4 overflow-y-auto p-6 shadow-lg sm:max-w-md"
+        className="max-h-[90dvh] overflow-y-auto"
       >
         {children}
       </DialogContent>
@@ -39,9 +39,9 @@ export function Modal({ open, onClose, children }: { open: boolean; onClose: () 
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
         aria-describedby={undefined}
-        className="data-[vaul-drawer-direction=bottom]:max-h-[90dvh] data-[vaul-drawer-direction=bottom]:rounded-t-2xl"
+        className="data-[vaul-drawer-direction=bottom]:max-h-[90dvh]"
       >
-        <div className="flex min-h-0 flex-col gap-4 overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="flex min-h-0 flex-col gap-5 overflow-y-auto p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
           {children}
         </div>
       </DrawerContent>
@@ -56,9 +56,9 @@ export function ModalHeader({ title }: { title: string }) {
   const Close = desktop ? DialogClose : DrawerClose;
   return (
     <div className="flex items-center justify-between gap-2">
-      <Title className="text-xl leading-tight font-semibold">{title}</Title>
+      <Title className="text-xl font-normal">{title}</Title>
       <Close asChild>
-        <Button variant="ghost" size="icon-lg" aria-label={t.common.close}>
+        <Button variant="secondary" size="icon" aria-label={t.common.close}>
           <XIcon />
         </Button>
       </Close>

@@ -40,17 +40,16 @@ export function Toasts() {
   // Logging out unmounts the shell: take the toast along.
   useEffect(() => () => void toast.dismiss(), []);
 
-  // Stay clear of the bottom navigation on mobile.
-  const offset = desktop ? 24 : { bottom: 96 };
+  // Stay clear of the tab bar on desktop and the header on mobile.
+  const offset = { top: desktop ? 72 : "calc(4.5rem + env(safe-area-inset-top))" };
 
   return (
     <Toaster
       theme={theme}
-      position="bottom-center"
+      position="top-center"
       offset={offset}
       mobileOffset={offset}
       containerAriaLabel={t.shell.notifications}
-      toastOptions={{ classNames: { toast: "cn-toast", actionButton: "max-md:!h-11 max-md:!min-w-11" } }}
     />
   );
 }

@@ -2,12 +2,14 @@
    Font: Outfit (npm i @fontsource-variable/outfit) — closest free match to the geometric sans in the images. */
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
 @import "@fontsource-variable/outfit";
 
 @custom-variant dark (&:is(.dark *));
 
 /* ───────────── Light (from images) ───────────── */
 :root {
+  color-scheme: light;
   --radius: 1rem; /* 16px base. Cards use 3xl = 32px */
 
   --background: oklch(0.964 0 0);          /* #F3F3F3 app canvas */
@@ -66,6 +68,7 @@
 
 /* ───────────── Dark (derived) ───────────── */
 .dark {
+  color-scheme: dark;
   --background: oklch(0.156 0.005 145.3);
   --foreground: oklch(0.961 0 0);
   --card: oklch(0.209 0.007 145.3);
@@ -203,7 +206,9 @@
 @layer base {
   * { @apply border-border outline-ring/50; }
   html { -webkit-font-smoothing: antialiased; }
-  body { @apply bg-background text-foreground font-sans text-base font-normal; font-feature-settings: "tnum" 1; }
+  body { @apply bg-background text-foreground font-sans text-base font-normal; font-feature-settings: "tnum" 1; overscroll-behavior: none; }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) { cursor: pointer; }
   h1 { @apply text-5xl font-normal; }
   h2 { @apply text-2xl font-normal; }
   h3 { @apply text-xl font-normal; }
@@ -215,4 +220,25 @@
   /* Fade the last rows of a clipped list (mobile cards in images) */
   .fade-bottom { mask-image: linear-gradient(to bottom, black 70%, transparent); }
   .num { font-variant-numeric: tabular-nums; }
+}
+
+@layer base {
+  /* Icons are drawn thin: DESIGN.md, "Icons". */
+  .lucide { stroke-width: 1.5; }
+}
+
+/* Theme change cross-fade, see theme/theme.ts. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

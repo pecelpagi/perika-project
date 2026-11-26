@@ -14,14 +14,14 @@ export function AppHeader() {
   const match = matchPage(activePath);
 
   return (
-    <header className="shrink-0 border-b bg-card pt-[env(safe-area-inset-top)]">
-      <div className="flex h-14 items-center gap-1 px-2">
+    <header className="shrink-0 pt-[env(safe-area-inset-top)]">
+      <div className="flex h-16 items-center gap-2 px-4">
         {activePath !== "/" && (
-          <Button variant="ghost" size="icon-lg" aria-label={t.common.back} onClick={back}>
-            <ChevronLeftIcon className="size-5" />
+          <Button variant="secondary" size="icon" aria-label={t.common.back} onClick={back}>
+            <ChevronLeftIcon />
           </Button>
         )}
-        <motion.h1 key={activePath} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate px-2 text-xl font-semibold">
+        <motion.h1 key={activePath} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate text-xl">
           {activePath === "/" ? "Perika" : match && title(match)}
         </motion.h1>
       </div>

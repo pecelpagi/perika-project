@@ -66,10 +66,10 @@ export function Transactions() {
           <Table className="table-fixed">
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-32 pl-0">{t.common.date}</TableHead>
+                <TableHead className="w-32 pl-0 lg:pl-0">{t.common.date}</TableHead>
                 <TableHead>{t.common.note}</TableHead>
                 <TableHead className="w-36">{t.common.category}</TableHead>
-                <TableHead className="w-40 pr-0 text-right">{t.common.amount}</TableHead>
+                <TableHead className="w-40 pr-0 lg:pr-0 text-right">{t.common.amount}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -82,14 +82,14 @@ export function Transactions() {
                     onClick={() => go(transactionPath(txn.id))}
                     className="cursor-pointer"
                   >
-                    <TableCell className="pl-0">{date(txn.date)}</TableCell>
+                    <TableCell className="pl-0 lg:pl-0">{date(txn.date)}</TableCell>
                     <TableCell>
-                      <Button variant="link" size="lg" className="w-full justify-start px-0 font-normal text-foreground">
+                      <Button variant="link" size="lg" className="w-full justify-start px-0 text-foreground">
                         <span className="truncate">{txn.note}</span>
                       </Button>
                     </TableCell>
                     <TableCell className="truncate">{label(txn)}</TableCell>
-                    <TableCell className="pr-0 text-right"><Amount txn={txn} /></TableCell>
+                    <TableCell className="pr-0 lg:pr-0 text-right"><Amount txn={txn} /></TableCell>
                   </MotionRow>
                 ))}
               </AnimatePresence>
@@ -99,8 +99,8 @@ export function Transactions() {
       ) : (
         [...days].map(([day, list]) => (
           <motion.section key={day} layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="mb-1 text-sm font-medium text-muted-foreground">{date(day)}</h2>
-            <SectionCard className="py-0">
+            <h2 className="mb-2 px-5 text-sm text-muted-foreground">{date(day)}</h2>
+            <SectionCard className="py-2 md:py-2">
               <RowList>
                 {list.map((txn) => (
                   <ListRow key={txn.id} title={txn.note} detail={label(txn)} end={<Amount txn={txn} />} onClick={() => go(transactionPath(txn.id))} />

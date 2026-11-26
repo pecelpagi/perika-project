@@ -1,7 +1,7 @@
 # DESIGN.md — Lime Fintech design system
 
 Stack: React + TypeScript · Tailwind v4 · shadcn/ui · lucide-react · sonner · recharts · react-hook-form + zod.
-Files: `src/styles/globals.css` (tokens) · `src/components/ui/_overrides.md` (component variants) · this file (rules).
+Files: `apps/web/src/styles/globals.css` (tokens) · `apps/web/src/components/ui/_overrides.md` (component variants) · this file (rules).
 
 ## 1. Style summary
 - Light gray canvas (`bg-background`) with **white borderless cards** (`rounded-3xl`, no shadow). Depth comes from colour contrast, not shadows.

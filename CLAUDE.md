@@ -61,11 +61,11 @@ One breakpoint, 768px, read with `useIsDesktop()`. `hooks/use-mobile.ts` belongs
 
 - `lib/create-store.ts` is the only store primitive, used by data, theme and language. `data/` holds seed data, calculations, the fake text parser and the coach replies.
 - All UI text goes through `useI18n()`. `i18n/en.ts` defines the `Dict` type and `id.ts` must match it. Stores keep keys or `{ en, id }` values, never translated text. Format money and dates with the helpers from `useI18n()`.
-- Dark mode is the `.dark` class on `<html>`. The theme script in `index.html`, `theme/theme.ts` (`BAR_COLOR`) and `--background` in `styles.css` must stay in sync.
+- Dark mode is the `.dark` class on `<html>`. The theme script in `index.html`, `theme/theme.ts` (`BAR_COLOR`) and `--background` in `styles/globals.css` must stay in sync (the first two use hex).
 
 ## UI conventions
 
-- Use a shadcn component when one exists. Shared compositions live in `src/components/`; `src/components/ui/` is generated code, edited only for tokens, 44px touch targets below 768px, or motion.
+- Use a shadcn component when one exists. Shared compositions live in `src/components/`; `src/components/ui/` is generated code, edited only for tokens, the variants in `_overrides.md`, 44px touch targets below 768px, or motion. App parts of the design system live in `src/components/app/`.
 - shadcn `Button` sets no `type`: set `type="button"` for non-submit buttons inside forms.
 - The `@/*` alias is declared twice, in `tsconfig.json` (`paths`, no `baseUrl` in TypeScript 7) and `vite.config.ts`.
 - Motion handles app transitions. Do not add it on top of the built-in animations of shadcn components, drawer or toast. Recharts animation stays off.
@@ -73,6 +73,10 @@ One breakpoint, 768px, read with `useIsDesktop()`. `hooks/use-mobile.ts` belongs
 
 ## Design system
 
-Follow DESIGN.md and apps/web/src/components/ui/_overrides.md. Use only tokens from apps/web/src/globals.css
+Follow DESIGN.md and apps/web/src/components/ui/_overrides.md. Use only tokens from apps/web/src/styles/globals.css
 
-The app has not been migrated to this system yet. Nothing imports `globals.css`, so its new tokens (such as `bg-brand`) have no effect; the live tokens are still in `apps/web/src/styles.css`. `DESIGN.md` also expects the stylesheet at `src/styles/globals.css` and relies on packages that are not installed. Where these files conflict with `docs/ui-plan.md` or the conventions above, the design system wins for visual style; ask before changing behaviour.
+The app uses this system ("Lime Fintech"). Where these files conflict with `docs/ui-plan.md` or the conventions above, the design system wins for visual style; ask before changing behaviour. Section 2 of `docs/ui-plan.md` lists the parts of the design system the app does not follow.
+
+- Components are installed. Never run `shadcn init` or the install commands in `_overrides.md`, and never overwrite existing files.
+- `DESIGN.md` mentions react-hook-form, zod and features such as an eye toggle or search in the header. The app has none of them; do not add them for style reasons.
+- `SectionCard` and `Meter` (`components/page.tsx`) carry the card and progress styling. At most one `brand` card per screen.

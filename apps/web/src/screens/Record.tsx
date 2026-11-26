@@ -1,4 +1,4 @@
-import { CameraIcon } from "lucide-react";
+import { CameraIcon, CheckIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { TextField } from "@/components/fields";
@@ -71,10 +71,10 @@ export function RecordScreen() {
       <div className="flex flex-1 flex-col gap-4 md:order-2">
         {saved && (
           <motion.div key={saved.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-            <SectionCard title={t.record.saved}>
+            <SectionCard title={t.record.saved} icon={CheckIcon}>
               <div className="mb-3 flex items-baseline justify-between gap-3">
                 <p className="min-w-0 truncate text-xl">{saved.note}</p>
-                <p className="text-xl font-semibold"><Amount txn={saved} /></p>
+                <p className="text-xl"><Amount txn={saved} /></p>
               </div>
               {category && (
                 <div className="mb-3">

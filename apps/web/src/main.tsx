@@ -4,7 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { MotionConfig, useReducedMotion } from "motion/react";
 import { readSession } from "./auth/session";
 import { routeTree } from "./routeTree.gen";
-import "./styles.css";
+import "./styles/globals.css";
 
 const router = createRouter({ routeTree });
 
