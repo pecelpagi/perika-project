@@ -45,6 +45,12 @@ export const id: Dict = {
     dark: "Gelap",
     system: "Sistem",
     language: "Bahasa",
+    notifications: "Notifikasi",
+    dragHelp: "Untuk memindahkan tab, tekan Spasi, gunakan tombol panah kiri dan kanan, lalu tekan Spasi untuk meletakkan atau Escape untuk batal.",
+    dragStart: (title: string) => `Tab ${title} diangkat`,
+    dragOver: (title: string, position: number) => `Tab ${title} di posisi ${position}`,
+    dragDrop: (title: string) => `Tab ${title} diletakkan`,
+    dragCancel: (title: string) => `Pemindahan tab ${title} dibatalkan`,
     logOut: "Keluar",
   },
   toast: {

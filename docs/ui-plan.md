@@ -1,6 +1,6 @@
 # Perika frontend UI plan
 
-Frontend only, fake data, no API calls. Stack: React 19, TanStack Router, Tailwind v4.
+Frontend only, fake data, no API calls. Stack: React 19, TanStack Router, Tailwind v4, shadcn/ui, dnd-kit, Motion.
 
 ## 1. Layout
 
@@ -42,37 +42,53 @@ Mobile (375px):
 
 ## 2. Design system
 
-Minimalist: generous whitespace, one accent, neutral surfaces, thin borders, little shadow.
+Minimalist: generous whitespace, one accent, neutral surfaces, thin borders, little shadow. Components come from shadcn/ui (`radix-nova` style).
 
-| Token | Light | Dark | Use |
+| shadcn variable | Light | Dark | Use |
 |---|---|---|---|
-| `bg` | `#FAFAF9` | `#0C0A09` | Page |
-| `surface` | `#FFFFFF` | `#1C1917` | Cards, sidebar, sheets |
-| `text` | `#1C1917` | `#F5F5F4` | Main text |
-| `muted` | `#57534E` | `#A8A29E` | Secondary text |
-| `border` | `#E7E5E4` | `#292524` | Decorative dividers and card edges |
-| `control` | `#78716C` | `#78716C` | Input and control outlines |
-| `accent` | `#4338CA` | `#A5B4FC` | Actions, active tab, focus, chart |
-| `on-accent` | `#FFFFFF` | `#1E1B4B` | Text on accent |
-| `positive` | `#15803D` | `#4ADE80` | Income, gain |
-| `negative` | `#B91C1C` | `#F87171` | Overspent, loss |
-| `warning` | `#92400E` | `#FBBF24` | Old price, not sure |
+| `--background` | `#FAFAF9` | `#0C0A09` | Page |
+| `--card`, `--popover`, `--sidebar` | `#FFFFFF` | `#1C1917` | Cards, sidebar, drawers, menus |
+| `--foreground` (also `*-foreground` on surfaces) | `#1C1917` | `#F5F5F4` | Main text |
+| `--muted-foreground` | `#57534E` | `#A8A29E` | Secondary text |
+| `--muted`, `--secondary`, `--accent` | `#F5F5F4` | `#292524` | Hover and track surfaces (shadcn's `accent` is not the brand color) |
+| `--border` | `#E7E5E4` | `#292524` | Decorative dividers and card edges |
+| `--input` | `#78716C` | `#78716C` | Input and control outlines |
+| `--primary`, `--ring`, `--chart-1` | `#4338CA` | `#A5B4FC` | Actions, active tab, focus, chart |
+| `--primary-foreground` | `#FFFFFF` | `#1E1B4B` | Text on primary |
+| `--sidebar-accent` | primary 10% on white | primary 12% on `#1C1917` | Active menu item and tab |
+| `--positive` | `#15803D` | `#4ADE80` | Income, gain |
+| `--destructive` | `#B91C1C` | `#F87171` | Overspent, loss, delete, errors |
+| `--warning` | `#92400E` | `#FBBF24` | Old price, not sure |
 
-Text colors are at least 4.8:1 on `bg` and `surface`; `on-accent` on `accent` at least 7.9:1; `control` at least 3.6:1.
+Text colors are at least 4.8:1 on page and card; text on primary at least 7.9:1; `--input` at least 3.6:1.
 Money colors carry money meaning only, always with a sign, icon or label.
 
 | Item | Rule |
 |---|---|
-| Type | System font; 12, 14, 16, 20, 28, 36px; weights 400, 500, 600; `tabular-nums` for money |
+| Type | System font; Tailwind sizes 12 to 36px; weights 400, 500, 600; `tabular-nums` for money |
 | Spacing | 4, 8, 12, 16, 24, 32, 48px; page padding 16px mobile, 32px desktop |
-| Radius | Controls 8px, cards 12px, sheet top 16px |
-| Shadow | None on cards; one soft shadow for sheet, dialog, menu and toast |
-| Motion | 150ms hover and tabs, 200ms sheet and dialog; off with `prefers-reduced-motion` |
-| Base components | Button, Input, Card, Money, Progress, Segmented, ListRow, Table, Sheet, Dialog, Toast, EmptyState; 2px accent focus ring |
+| Radius | Controls 8px, cards 12px, drawer top 16px |
+| Shadow | None on cards; shadcn shadows for drawer, dialog, menu, toast and the dragged tab |
+| Touch | Below 768px, buttons, toggles, inputs, select triggers and options are at least 44px (set in `components/ui`) |
+| Icons | `lucide-react` |
+| Focus | shadcn focus ring in the primary color |
+
+Motion:
+
+| Where | Animation |
+|---|---|
+| Page switch, mobile header title, login and sign up | Motion: fade, 8px rise, 180ms |
+| Tab add and remove | Motion: fade and 6px move; neighbours slide |
+| Tab reorder | dnd-kit: 200ms slide and drop |
+| Lists, table rows, chat messages, saved card, chart view, form steps | Motion: fade; list rows also slide to their new place |
+| Theme change | Browser view transition, 200ms cross-fade |
+| Dialog, alert, menus, select, drawer, toast, progress | Built into shadcn (`tw-animate-css`, Vaul, Sonner); durations are theirs |
+
+Only `transform` and `opacity` for movement; colors and shadows use short CSS transitions. Reduced motion turns off CSS animation, Motion, the drag transitions and the theme fade.
 
 - Theme: Light, Dark, System (default), saved in `localStorage` as `perika.theme`. Blocked storage or an invalid value means System.
-- Tokens are CSS variables in `styles.css`, mapped with Tailwind `@theme inline`. `data-theme` on `<html>` selects the set and `color-scheme`.
-- A small inline script in the `index.html` head sets `data-theme` and the `theme-color` meta (`bg` value) before first paint, so nothing flashes. Both update on change; System follows OS changes live.
+- Colors are shadcn CSS variables in `styles.css`. The `.dark` class on `<html>` selects the dark set and `color-scheme`.
+- A small inline script in the `index.html` head sets `.dark` and the `theme-color` meta (`--background` value) before first paint, so nothing flashes. Both update on change; System follows OS changes live.
 
 ## 3. Navigation
 
@@ -96,19 +112,22 @@ type TabsState = { tabs: Tab[] }; // the active tab is always derived from the U
 | Desktop to mobile | Same tab list. Mobile hides the tab bar; visited pages become kept-alive views. |
 | Mobile history | Home to a section: push. Section to section: replace. Detail page: push. Back therefore returns to Home. |
 | Header back | Hidden on Home. Uses history back if possible, else goes to Home. |
-| Bottom sheets | Opening pushes a history entry with the sheet id in history state, so browser back closes it. A refresh drops the sheet. |
+| Dialogs and drawers | Dialog on desktop, drawer on mobile, alert dialog for delete on both. Opening pushes a history entry with the id in history state, so browser back closes it. A refresh drops it. The delete alert closes with Cancel, Esc or back, not with an outside tap. |
 | Auth gate | `/login` and `/signup` render outside `AppShell`: no tabs, sidebar or bottom nav. `__root.tsx` redirects signed-out visitors to `/login?redirect=<path>` and signed-in visitors on auth pages to Home. |
 | Session | Fake: `{ email }` in `localStorage` (`perika.session`); passwords are never stored. Login replaces history, then opens the redirect path (in-app paths only) or Home. Logout clears session, saved tabs and fake data, keeps theme and language. |
 
 Desktop tabs: Home has no close button. Right-click or the `⋯` button gives Close, Close others, Close all (Home stays). The tab bar scrolls horizontally and scrolls the active tab into view.
 
-Drag and drop (desktop only), with native HTML drag and drop:
+Drag and drop (desktop only), with dnd-kit:
 
-- Drag a tab to reorder it. A line shows the drop position. Dragging near either end scrolls the bar.
+- Drag a tab to reorder it. The tab lifts and the others slide. Dragging near either end scrolls the bar.
+- A drag starts after the pointer moves 6px (touch: 250ms hold), so a click selects the tab. The close button never starts a drag.
+- Keyboard: focus a tab, Space picks it up, arrow keys move it, Space or Enter drops it. Enter on an idle tab selects it. Screen reader text follows the language.
 - Home stays first: it cannot be dragged, and nothing can be dropped before it.
 - Dropping changes only the order of `tabs`, so the URL, active tab and page state stay. The order is saved with the tab list.
 - Dropping outside the tab bar, or pressing Esc, cancels.
 - `TabPanels` renders in a fixed order, keyed by path, so reordering does not move panel DOM or reset scroll.
+- Portal content (dialogs, drawers, select lists) closes when its tab is hidden (`useShown`).
 
 | Edge case | Behaviour |
 |---|---|
@@ -134,7 +153,7 @@ All screens use design tokens and dictionary text. Layouts allow longer Indonesi
 | Detail `/transactions/$id` | Amount, date, category, source, grams if gold | Change category, delete with confirm | Records | New tab / pushed full screen |
 | Budget `/budget` | Categories with budget, spent, left, progress bar | Edit budget amount | Budgets | Table with inline edit / list, edit in sheet |
 | Gold `/gold` | Grams, buyback value, gain or loss, 20% target progress, zakat estimate, price source, date, old-price warning | Add purchase (always confirm), confirm new price | Gold wallet, zakat reminder | Two columns / one column |
-| Kompas Merdeka `/freedom` | Freedom date, range, target, 10-year SVG chart, assumptions, education note | Toggle with or without inflation | Freedom page with inflation | Chart beside assumptions / chart first |
+| Kompas Merdeka `/freedom` | Freedom date, range, target, 10-year chart (shadcn Chart), assumptions, education note | Toggle with or without inflation | Freedom page with inflation | Chart beside assumptions / chart first |
 | Coach `/coach` | Chat, sources under answers, "I don't know" reply, approval card, education note | Send, tap a sample question, approve or reject | Coach chat | Centered column / full-screen chat, input above keyboard |
 | More `/more` | Links to Transactions, Gold, Kompas Merdeka; theme and language switches, log out | Open page, switch theme or language, log out | Navigation | Not in desktop menu (switches sit at sidebar bottom) / bottom nav item |
 | Login `/login` | Email, password, link to sign up, theme and language switches | Log in | Separate users (risk) | Centered card / full screen |
@@ -194,20 +213,43 @@ type ChatMessage = { id: string; role: "user" | "coach"; text: string | Localize
 |---|---|---|
 | `routes/*.tsx` | Paths only | Both |
 | `auth/` | Fake session, login and sign-up forms | Both |
-| `shell/{AppShell,TabPanels,pages,tabs-store}` | Page registry, tabs, keep-alive | Both |
+| `shell/{AppShell,TabPanels,pages,tabs-store,Toasts,icons}` | Page registry, tabs, keep-alive, toast, page icons | Both |
 | `shell/desktop/{Sidebar,TabBar,TabMenu}` | Desktop chrome | Desktop |
 | `shell/mobile/{AppHeader,BottomNav}` | Mobile chrome | Mobile |
 | `screens/*.tsx` | One file per screen, with desktop and mobile variants inside | Both |
-| `ui/` | Base components from section 2, `ResponsiveList`, `ThemeSwitch`, `LanguageSwitch`, icons; `Sheet` on mobile, `Dialog` on desktop | Both |
+| `components/ui/` | shadcn components, added with `pnpm dlx shadcn@latest add`; edited only for 44px touch targets | Both |
+| `components/{page,fields,list,modal,switches}.tsx` | Compositions of shadcn parts | Both |
+| `hooks/use-mobile.ts` | Generated by shadcn for its sidebar; app code uses `useIsDesktop` | shadcn |
+| `lib/` | Store, storage, `useIsDesktop`, `useShown`, `cn` | Both |
 | `theme/` | Theme provider | Both |
 | `i18n/` | See section 5 | Both |
 | `data/` | See section 6 | Both |
-| `styles.css`, `../index.html` | Tokens; theme script | Both |
+| `styles.css`, `../index.html` | Color variables; theme script | Both |
+| `../components.json` | shadcn configuration | Tooling |
 | `../public/` | Manifest and icons | Both |
 
-## 8. New dependencies
+`@/*` maps to `src/*` with `paths` in `tsconfig.json` (TypeScript 7 has no `baseUrl`) and an alias in `vite.config.ts`.
 
-None. `<Activity>` ships with React; theming uses Tailwind v4 variables; translation uses typed dictionaries and `Intl`; chart and icons are inline SVG.
+Custom code where shadcn has nothing suitable:
+
+| Component | Built from | Reason |
+|---|---|---|
+| Tab shell (`TabPanels`) | React `<Activity>` | Keep-alive pages are not a UI component |
+| Tab bar | `Button`, `ContextMenu`, `DropdownMenu`, dnd-kit | Radix `Tabs` has no close, reorder or URL-driven panels |
+| Bottom navigation | `Button` | Not in the registry |
+| Mobile header | `Button` | Not in the registry |
+| `Modal` | `Dialog`, `Drawer` | The registry has no component that switches between them |
+| `page`, `fields`, `list`, `switches` | `Card`, `Table`, `Progress`, `Empty`, `ToggleGroup`, `Field`, `Input`, `Select`, `Item` | Shared wiring only: labels, errors, translations |
+
+## 8. Dependencies
+
+| Package | Purpose |
+|---|---|
+| `radix-ui`, `vaul`, `sonner`, `recharts`, `lucide-react` | Behind the shadcn components, drawer, toast, chart, icons |
+| `class-variance-authority`, `cn`, `tw-animate-css`, `shadcn` (dev) | shadcn styling and CLI |
+| `next-themes` | Imported by the generated `sonner.tsx`; the app keeps its own theme store |
+| `@dnd-kit/react`, `@dnd-kit/dom`, `@dnd-kit/helpers` | Tab drag and drop |
+| `motion` | Transitions; no other animation library is added (Recharts animation is off) |
 
 ## 9. Build steps
 
@@ -241,7 +283,10 @@ No open questions.
 | 5 | Theme | Light, Dark, System (default) |
 | 6 | Closing a tab with unsaved input | No warning |
 | 7 | Current `/api/hello` call on Home | Removed in step 1; the API stays unchanged |
-| 8 | Tab reordering | Drag and drop on desktop; Home fixed first; no new dependency |
-| 9 | Visual style | Minimalist, indigo accent, tokens in section 2 |
+| 8 | Tab reordering | Drag and drop on desktop with dnd-kit; Home fixed first |
+| 9 | Visual style | Minimalist, indigo primary, shadcn variables in section 2 |
 | 10 | Theme and language controls | Desktop sidebar bottom; mobile "More"; no Settings screen |
 | 11 | Login and sign up | Fake, outside the tab shell; logout in sidebar and "More" |
+| 12 | Component library | shadcn/ui on Radix; replaces the hand-written components and icons |
+| 13 | Animation | Motion for app transitions; shadcn components keep their built-in animations |
+| 14 | Delete confirmation | shadcn Alert Dialog on desktop and mobile |

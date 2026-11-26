@@ -1,4 +1,10 @@
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { SelectField, TextField } from "@/components/fields";
+import { ListRow, RowList } from "@/components/list";
+import { EmptyState, Page, SectionCard } from "@/components/page";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { newestFirst } from "../data/calc";
 import { data } from "../data/store";
 import type { Txn, TxnKind } from "../data/types";
@@ -6,10 +12,11 @@ import { useI18n } from "../i18n";
 import { useIsDesktop } from "../lib/use-is-desktop";
 import { useNav } from "../shell/nav";
 import { transactionPath } from "../shell/pages";
-import { Card, EmptyState, Input, ListRow, Page, Select } from "../ui";
 import { Amount, useTxnLabel } from "./shared";
 
 const KINDS: TxnKind[] = ["spending", "income", "gold"];
+const ALL = "all"; // Select items cannot have an empty value.
+const MotionRow = motion.create(TableRow);
 
 export function Transactions() {
   const { t, date, month: monthName } = useI18n();
@@ -18,15 +25,15 @@ export function Transactions() {
   const desktop = useIsDesktop();
   const label = useTxnLabel();
   const [search, setSearch] = useState("");
-  const [kind, setKind] = useState("");
-  const [month, setMonth] = useState("");
+  const [kind, setKind] = useState(ALL);
+  const [month, setMonth] = useState(ALL);
 
   const months = [...new Set(newestFirst(txns).map((x) => x.date.slice(0, 7)))];
   const shown = newestFirst(txns).filter(
     (x) =>
       x.note.toLowerCase().includes(search.trim().toLowerCase()) &&
-      (!kind || x.kind === kind) &&
-      (!month || x.date.startsWith(month)),
+      (kind === ALL || x.kind === kind) &&
+      (month === ALL || x.date.startsWith(month)),
   );
   const days = shown.reduce((map, txn) => map.set(txn.date, [...(map.get(txn.date) ?? []), txn]), new Map<string, Txn[]>());
 
@@ -34,63 +41,73 @@ export function Transactions() {
     <Page>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-[1fr_12rem_14rem]">
         <div className="col-span-2 md:col-span-1">
-          <Input label={t.transactions.search} hideLabel placeholder={t.transactions.search} type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <TextField label={t.transactions.search} hideLabel placeholder={t.transactions.search} type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <Select
+        <SelectField
           label={t.common.type}
           hideLabel
           value={kind}
-          onChange={(e) => setKind(e.target.value)}
-          options={[{ value: "", label: `${t.common.type}: ${t.common.all}` }, ...KINDS.map((k) => ({ value: k, label: t.common.kind[k] }))]}
+          onChange={setKind}
+          options={[{ value: ALL, label: `${t.common.type}: ${t.common.all}` }, ...KINDS.map((k) => ({ value: k, label: t.common.kind[k] }))]}
         />
-        <Select
+        <SelectField
           label={t.transactions.month}
           hideLabel
           value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          options={[{ value: "", label: `${t.transactions.month}: ${t.common.all}` }, ...months.map((m) => ({ value: m, label: monthName(m) }))]}
+          onChange={setMonth}
+          options={[{ value: ALL, label: `${t.transactions.month}: ${t.common.all}` }, ...months.map((m) => ({ value: m, label: monthName(m) }))]}
         />
       </div>
 
       {shown.length === 0 ? (
         <EmptyState>{t.transactions.empty}</EmptyState>
       ) : desktop ? (
-        <Card>
-          <table className="w-full table-fixed text-left text-sm">
-            <thead className="text-muted">
-              <tr className="border-b border-border">
-                <th className="w-32 py-2 font-medium">{t.common.date}</th>
-                <th className="py-2 font-medium">{t.common.note}</th>
-                <th className="w-36 py-2 font-medium">{t.common.category}</th>
-                <th className="w-40 py-2 text-right font-medium">{t.common.amount}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {shown.map((txn) => (
-                <tr key={txn.id} onClick={() => go(transactionPath(txn.id))} className="cursor-pointer border-b border-border last:border-0 hover:bg-text/5">
-                  <td className="py-1">{date(txn.date)}</td>
-                  <td className="py-1">
-                    <button type="button" className="min-h-10 w-full truncate text-left">{txn.note}</button>
-                  </td>
-                  <td className="truncate py-1">{label(txn)}</td>
-                  <td className="py-1 text-right"><Amount txn={txn} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
+        <SectionCard>
+          <Table className="table-fixed">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-32 pl-0">{t.common.date}</TableHead>
+                <TableHead>{t.common.note}</TableHead>
+                <TableHead className="w-36">{t.common.category}</TableHead>
+                <TableHead className="w-40 pr-0 text-right">{t.common.amount}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <AnimatePresence initial={false}>
+                {shown.map((txn) => (
+                  <MotionRow
+                    key={txn.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onClick={() => go(transactionPath(txn.id))}
+                    className="cursor-pointer"
+                  >
+                    <TableCell className="pl-0">{date(txn.date)}</TableCell>
+                    <TableCell>
+                      <Button variant="link" size="lg" className="w-full justify-start px-0 font-normal text-foreground">
+                        <span className="truncate">{txn.note}</span>
+                      </Button>
+                    </TableCell>
+                    <TableCell className="truncate">{label(txn)}</TableCell>
+                    <TableCell className="pr-0 text-right"><Amount txn={txn} /></TableCell>
+                  </MotionRow>
+                ))}
+              </AnimatePresence>
+            </TableBody>
+          </Table>
+        </SectionCard>
       ) : (
         [...days].map(([day, list]) => (
-          <section key={day}>
-            <h2 className="mb-1 text-sm font-medium text-muted">{date(day)}</h2>
-            <Card className="py-0">
-              <ul>
+          <motion.section key={day} layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <h2 className="mb-1 text-sm font-medium text-muted-foreground">{date(day)}</h2>
+            <SectionCard className="py-0">
+              <RowList>
                 {list.map((txn) => (
                   <ListRow key={txn.id} title={txn.note} detail={label(txn)} end={<Amount txn={txn} />} onClick={() => go(transactionPath(txn.id))} />
                 ))}
-              </ul>
-            </Card>
-          </section>
+              </RowList>
+            </SectionCard>
+          </motion.section>
         ))
       )}
     </Page>

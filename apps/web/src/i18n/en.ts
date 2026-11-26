@@ -45,6 +45,12 @@ export const en = {
     system: "System",
     language: "Language",
     logOut: "Log out",
+    notifications: "Notifications",
+    dragHelp: "To move a tab, press Space, use the left and right arrow keys, then press Space to drop it or Escape to cancel.",
+    dragStart: (title: string) => `Picked up tab ${title}`,
+    dragOver: (title: string, position: number) => `Tab ${title} is at position ${position}`,
+    dragDrop: (title: string) => `Dropped tab ${title}`,
+    dragCancel: (title: string) => `Moving tab ${title} was cancelled`,
   },
   toast: {
     saved: "Record saved",

@@ -22,9 +22,16 @@ API docs (Scalar): http://localhost:3000/api/docs. OpenAPI spec: http://localhos
 Frontend only: all data is fake and in memory, and resets on reload. Plan: [docs/ui-plan.md](docs/ui-plan.md).
 
 - Log in with any valid email and a password. No real account is created.
-- Desktop (768px and wider): in-app tabs. Mobile: bottom navigation.
+- UI: shadcn/ui components, dnd-kit for tab reordering, Motion for transitions.
+- Desktop (768px and wider): in-app tabs, drag or Space and arrow keys to reorder. Mobile: bottom navigation.
 - Light, dark and system themes; English and Indonesian.
 - Try `kopi 25rb` or `beli emas 2 gram 5,2jt` on the Record page.
+
+Add a shadcn component from `apps/web`:
+
+```sh
+pnpm dlx shadcn@latest add <name>
+```
 
 ## Check
 

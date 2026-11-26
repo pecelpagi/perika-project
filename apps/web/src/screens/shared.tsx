@@ -1,7 +1,7 @@
+import { SelectField } from "@/components/fields";
 import { data, setTxnCategory } from "../data/store";
 import type { Txn } from "../data/types";
 import { useI18n } from "../i18n";
-import { Select } from "../ui";
 
 /** Money color always comes with a sign. */
 export function Amount({ txn }: { txn: Txn }) {
@@ -14,10 +14,10 @@ export function CategorySelect({ value, onChange }: { value: string; onChange: (
   const { t, pick } = useI18n();
   const { categories } = data.use();
   return (
-    <Select
+    <SelectField
       label={t.common.category}
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={onChange}
       options={categories.map((c) => ({ value: c.id, label: pick(c.name) }))}
     />
   );
